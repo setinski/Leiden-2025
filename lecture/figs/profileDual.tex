@@ -1,0 +1,20 @@
+\documentclass[tikz]{standalone}
+\usepackage{tikz}
+
+\begin{document}    
+\begin{tikzpicture}
+\draw[->] (-0.5, 0) -- (20.5, 0);
+\draw[->] (0, -9.1) -- (0, 9.1);
+
+\node at (-.8, 2){\Huge{$\ell_i$}};
+\node at (5, -.8){\Huge{$i$}};
+\node[color=red] at (10.5, 0){\Huge{$\otimes$}};
+
+
+\draw[color=purple,line width=3pt, dashed] plot coordinates {(1,15.5-6) (2,11.5-6) (3,12-6) (4,10.3-6) (5,10-6) (6,9.9-6) (7,7-6) (8,7.5-6) (9,7.3-6) (10,7.5-6) (11,6.8-6) (12,4-6) (13,3-6) (14,3.2-6) (15,2.5-6) (16,2-6) (17,1-6) (18,0.5-6) (19,0.7-6) (20,0.3-6)};
+
+\draw[color=blue,line width=3pt] plot coordinates {(20,-15.5+6) (19,-11.5+6) (18,-12+6) (17,-10.3+6) (16,-10+6) (15,-9.9+6) (14,-7+6) (13,-7.5+6) (12,-7.3+6) (11,-7.5+6) (10,-6.8+6) (9,-4+6) (8,-3+6) (7,-3.2+6) (6,-2.5+6) (5,-2+6) (4,-1+6) (3,-0.5+6) (2,-0.7+6) (1,-0.3+6)};;
+%If you want to change the above function, it is based on  y = -0.3x + 9.125
+%Then add perturbations while preserving \sum \ell_i
+\end{tikzpicture}
+\end{document}

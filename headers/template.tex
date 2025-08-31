@@ -1,0 +1,74 @@
+%% Oct 2004; edited by OR
+%%version Feb 3, 2001; last edited by SA
+\documentclass[11pt]{article}
+%\usepackage{lucidbry}
+%\usepackage{trees}
+\usepackage{mathtools}
+\usepackage[sc]{mathpazo}
+%\usepackage{txfonts}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{mnsymbol}
+%\usepackage{mathabx}
+%\usepackage{fdsymbol}
+
+%\usepackage{accents}
+%\usepackage{times}
+\usepackage{ntheorem}
+\usepackage{latexsym}
+\usepackage{xspace}
+\usepackage{fancyhdr}
+%\usepackage{psfig}
+%\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{epspdfconversion}
+%\DeclareGraphicsExtensions{.pdf,.eps,.png,.jpg}
+\usepackage{hyperref}
+\usepackage[ruled]{algorithm2e}
+\newcommand\mycommfont[1]{\rmfamily{\it #1}}
+\SetCommentSty{mycommfont}
+
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{color}
+%\usepackage{lucmath}
+
+%tTHEOREM TYPE ENVIRONMENTS
+%\theoremstyle{break}
+\theoremheaderfont{\scshape}
+\theorembodyfont{\slshape}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{plain}
+\theorembodyfont{\rmfamily}
+\newtheorem{problem}{Problem}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{remark}[theorem]{Remark}
+\theorembodyfont{\itshape}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{claim}[theorem]{Claim}
+\newenvironment{proof}{\noindent {\sc Proof:}}{$\Box$ \medskip}
+\newenvironment{proofof}[1]{\noindent {\sc Proof of #1:}}{$\Box$ \medskip}
+\theoremstyle{plain}
+\theorembodyfont{\normalfont}
+\theoremheaderfont{\normalfont\bfseries}
+\newtheorem{exercise}{Exercise}
+
+% {\renewcommand{\labelenumi}{\S\theenumi}
+%    \begin{enumerate}}{\end{enumerate}}
+
+
+% \setlength{\oddsidemargin}{.25in}
+% \setlength{\evensidemargin}{.25in}
+% \setlength{\textwidth}{6in}
+% \setlength{\topmargin}{-0.4in}
+% \setlength{\textheight}{8.5in}
+
+\usepackage{fullpage}

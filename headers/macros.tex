@@ -1,0 +1,575 @@
+% Jan 2013, edited by DD
+% Oct 2004, edited by OR
+%%Version Feb 3 2001; last edited by SA
+% Feb 13, 2001: LT adds following macros:
+%  \logred, \conl, \genclass, \cogenclass, \size,
+%  \floor, \ceil, \comp, \ffigure, \ffigureh
+%  \iff, \implies, \sigmatwo, \sigmathree, \pitwo,
+%  \scand, \scor, \scnot, \scyes
+%Feb20 SA added \sig and \pip for boldface polynomial hierarchy
+%% Macros for complexity theory notation
+%% Complexity classes
+
+
+
+%% Notation for integers, natural numbers, reals, fractions, sets, cardinalities
+%%and so on
+
+\newcommand\B{\{0,1\}}      % boolean alphabet  use in math mode
+\newcommand\Bs{\{0,1\}^*}   % B star            use in math mode
+\newcommand\true{\mbox{\sc True}}
+\newcommand\false{\mbox{\sc False}}
+\DeclareRobustCommand{\fracp}[2]{{#1 \overwithdelims()#2}}
+\DeclareRobustCommand{\fracb}[2]{{#1 \overwithdelims[]#2}}
+\newcommand{\marginlabel}[1]%
+{\mbox{}\marginpar{\it{\raggedleft\hspace{0pt}#1}}}
+\newcommand\card[1]{\left| #1 \right|} %cardinality of set S; usage \card{S}
+\newcommand{\comp}[1]{\overline{#1}}
+\newcommand{\tran}[1]{{#1}^T}
+
+
+%% Various things to write in small caps
+\def\scand{\mbox{\sc and}}
+\def\scor{\mbox{\sc or}}
+\def\scnot{\mbox{\sc not}}
+\def\scyes{\mbox{\sc yes}}
+\def\scno{\mbox{\sc no}}
+\def\scmaybe{\mbox{\sc maybe}}
+
+% new epsilons
+\newcommand{\eps}{\varepsilon}
+\renewcommand{\epsilon}{\varepsilon}
+
+\def\lecturegg{7}
+
+% GENERAL COMPUTING STUFF
+\newcommand{\bit}{\ensuremath{\set{0,1}}}
+\newcommand{\pmone}{\ensuremath{\set{-1,1}}}
+
+% asymptotic stuff
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\polylog}{polylog}
+\DeclareMathOperator{\negl}{negl}
+\newcommand{\Otil}{\ensuremath{\tilde{O}}}
+
+% probability/distribution stuff
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\DeclareMathOperator*{\Var}{Var}
+
+% assorted
+\DeclareMathOperator*{\wt}{wt}
+
+% hash functions
+\newcommand{\calH}{\ensuremath{\mathcal{H}}}
+\newcommand{\calX}{\ensuremath{\mathcal{X}}}
+\newcommand{\calY}{\ensuremath{\mathcal{Y}}}
+\newcommand{\calL}{\ensuremath{\mathcal{L}}}
+\newcommand{\calB}{\ensuremath{\mathcal{B}}}
+
+\newcommand{\compind}{\ensuremath{\stackrel{c}{\approx}}}
+\newcommand{\statind}{\ensuremath{\stackrel{s}{\approx}}}
+\newcommand{\perfind}{\ensuremath{\equiv}}
+
+% font for general-purpose algorithms
+\newcommand{\algo}[1]{\ensuremath{\mathsf{#1}}}
+
+% font for complexity classes
+\newcommand{\class}[1]{\ensuremath{\mathsf{#1}}}
+
+% complexity classes and languages
+\renewcommand{\P}{\class{P}}
+\newcommand{\BPP}{\class{BPP}}
+\newcommand{\NP}{\class{NP}}
+\newcommand\RP{\class{RP}}
+\newcommand\ZPP{\class{ZPP}}
+\newcommand{\coNP}{\class{coNP}}
+\newcommand{\AM}{\class{AM}}
+\newcommand{\coAM}{\class{coAM}}
+\newcommand{\IP}{\class{IP}}
+\newcommand{\SZK}{\class{SZK}}
+\newcommand{\NISZK}{\class{NISZK}}
+\newcommand{\NICZK}{\class{NICZK}}
+\newcommand{\PPP}{\class{PPP}}
+\newcommand{\PPAD}{\class{PPAD}}
+
+% \newcommand\SIGMA2{\class{$\Sigma_2$}}
+% \newcommand\SIGMA3{\class{$\Sigma_3$}}
+% \newcommand\PI2{\mbox{\bf $\Pi_2$}\xspace}
+\newcommand\PH{\mbox{\bf PH}\xspace}
+\newcommand\PSPACE{\mbox{\bf PSPACE}\xspace}
+\newcommand\NPSPACE{\mbox{\bf NPSPACE}\xspace}
+\newcommand\DL{\mbox{\bf L}\xspace}
+\newcommand\NL{\mbox{\bf NL}\xspace}
+\newcommand\coNL{\mbox{\bf coNL}\xspace}
+\newcommand\sharpP{\mbox{\#{\bf P}}\xspace}
+\newcommand\parityP{\mbox{$\oplus$ {\bf P}}\xspace}
+\newcommand\PCP{\mbox{\bf PCP}}
+\newcommand\DTIME{\mbox{\bf DTIME}}
+\newcommand\NTIME{\mbox{\bf NTIME}}
+\newcommand\DSPACE{\mbox{\bf SPACE}\xspace}
+\newcommand\NSPACE{\mbox{\bf NSPACE}\xspace}
+\newcommand\CNSPACE{\mbox{\bf coNSPACE}\xspace}
+\newcommand\EXPTIME{\mbox{\bf EXPTIME}\xspace}
+\newcommand\NEXPTIME{\mbox{\bf NEXPTIME}\xspace}
+\newcommand\GENCLASS{\mbox{$\cal C$}\xspace}
+\newcommand\coGENCLASS{\mbox{\bf co$\cal C$}\xspace}
+\newcommand\SIZE{\mbox{\bf SIZE}\xspace}
+\newcommand\sig{\mathbf \Sigma}
+\newcommand\pip{\mathbf \Pi}
+
+%%Computational problems
+\newcommand\sat{\mbox{SAT}\xspace}
+\newcommand\tsat{\mbox{3SAT}\xspace}
+\newcommand\tqbf{\mbox{TQBF}\xspace}
+
+
+\newcommand{\yes}{\ensuremath{\text{YES}}}
+\newcommand{\no}{\ensuremath{\text{NO}}}
+
+\newcommand{\Piyes}{\ensuremath{\Pi^{\yes}}}
+\newcommand{\Pino}{\ensuremath{\Pi^{\no}}}
+
+% macros for matrices and vectors
+\newcommand{\matA}{\ensuremath{\mathbf{A}}}
+\newcommand{\matB}{\ensuremath{\mathbf{B}}}
+\newcommand{\matC}{\ensuremath{\mathbf{C}}}
+\newcommand{\matD}{\ensuremath{\mathbf{D}}}
+\newcommand{\matE}{\ensuremath{\mathbf{E}}}
+\newcommand{\matF}{\ensuremath{\mathbf{F}}}
+\newcommand{\matG}{\ensuremath{\mathbf{G}}}
+\newcommand{\matH}{\ensuremath{\mathbf{H}}}
+\newcommand{\matI}{\ensuremath{\mathbf{I}}}
+\newcommand{\matJ}{\ensuremath{\mathbf{J}}}
+\newcommand{\matK}{\ensuremath{\mathbf{K}}}
+\newcommand{\matL}{\ensuremath{\mathbf{L}}}
+\newcommand{\matM}{\ensuremath{\mathbf{M}}}
+\newcommand{\matN}{\ensuremath{\mathbf{N}}}
+\newcommand{\matO}{\ensuremath{\mathbf{O}}}
+\newcommand{\matP}{\ensuremath{\mathbf{P}}}
+\newcommand{\matQ}{\ensuremath{\mathbf{Q}}}
+\newcommand{\matR}{\ensuremath{\mathbf{R}}}
+\newcommand{\matS}{\ensuremath{\mathbf{S}}}
+\newcommand{\matT}{\ensuremath{\mathbf{T}}}
+\newcommand{\matU}{\ensuremath{\mathbf{U}}}
+\newcommand{\matV}{\ensuremath{\mathbf{V}}}
+\newcommand{\matW}{\ensuremath{\mathbf{W}}}
+\newcommand{\matX}{\ensuremath{\mathbf{X}}}
+\newcommand{\matY}{\ensuremath{\mathbf{Y}}}
+\newcommand{\matZ}{\ensuremath{\mathbf{Z}}}
+\newcommand{\matzero}{\ensuremath{\mathbf{0}}}
+
+\newcommand{\veca}{\ensuremath{\mathbf{a}}}
+\newcommand{\vecb}{\ensuremath{\mathbf{b}}}
+\newcommand{\vecc}{\ensuremath{\mathbf{c}}}
+\newcommand{\vecd}{\ensuremath{\mathbf{d}}}
+\newcommand{\vece}{\ensuremath{\mathbf{e}}}
+\newcommand{\vecf}{\ensuremath{\mathbf{f}}}
+\newcommand{\vecg}{\ensuremath{\mathbf{g}}}
+\newcommand{\vech}{\ensuremath{\mathbf{h}}}
+\newcommand{\veck}{\ensuremath{\mathbf{k}}}
+\newcommand{\vecm}{\ensuremath{\mathbf{m}}}
+\newcommand{\vecp}{\ensuremath{\mathbf{p}}}
+\newcommand{\vecq}{\ensuremath{\mathbf{q}}}
+\newcommand{\vecr}{\ensuremath{\mathbf{r}}}
+\newcommand{\vecs}{\ensuremath{\mathbf{s}}}
+\newcommand{\vect}{\ensuremath{\mathbf{t}}}
+\newcommand{\vecu}{\ensuremath{\mathbf{u}}}
+\newcommand{\vecv}{\ensuremath{\mathbf{v}}}
+\newcommand{\vecw}{\ensuremath{\mathbf{w}}}
+\newcommand{\vecx}{\ensuremath{\mathbf{x}}}
+\newcommand{\vecy}{\ensuremath{\mathbf{y}}}
+\newcommand{\vecz}{\ensuremath{\mathbf{z}}}
+\newcommand{\veczero}{\ensuremath{\mathbf{0}}}
+
+\renewcommand{\vec}[1]{\ensuremath{\mathbf{#1}}}
+
+\DeclareMathOperator{\diag}{diag}
+
+% blackboard symbols
+
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+\newcommand{\D}{\ensuremath{\mathbb{D}}}
+\newcommand{\F}{\ensuremath{\mathbb{F}}}
+\newcommand{\G}{\ensuremath{\mathbb{G}}}
+\newcommand{\J}{\ensuremath{\mathbb{J}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+
+\newcommand{\Zt}{\ensuremath{\Z_t}}
+\newcommand{\Zp}{\ensuremath{\Z_p}}
+\newcommand{\Zq}{\ensuremath{\Z_q}}
+\newcommand{\ZN}{\ensuremath{\Z_N}}
+\newcommand{\Zps}{\ensuremath{\Z_p^*}}
+\newcommand{\ZNs}{\ensuremath{\Z_N^*}}
+\newcommand{\JN}{\ensuremath{\J_N}}
+\newcommand{\QRN}{\ensuremath{\mathbb{QR}_N}}
+
+% Euclidean Ball
+\newcommand{\ball}{\mathcal{B}_2}
+
+% "left-right" pairs of symbols
+
+% inner product
+\newcommand{\pr}[2]{\langle{#1, #2}\rangle}
+\newcommand{\prfit}[2]{\left\langle{#1, #2}\right\rangle}
+
+% absolute value
+\newcommand{\absfit}[1]{\left\lvert{#1}\right\rvert}
+% a set
+\newcommand{\set}[1]{\{{#1}\}}
+\newcommand{\setfit}[1]{\left\{{#1}\right\}}
+% parens
+\newcommand{\parens}[1]{({#1})}
+\newcommand{\parensfit}[1]{\left({#1}\right)}
+% tuple, alias for parens
+\newcommand{\tuple}[1]{\parens{#1}}
+\newcommand{\tuplefit}[1]{\parensfit{#1}}
+% square brackets
+\newcommand{\bracks}[1]{[{#1}]}
+\newcommand{\bracksfit}[1]{\left[{#1}\right]}
+% rounding off
+\newcommand{\round}[1]{\lfloor{#1}\rceil}
+\newcommand{\roundfit}[1]{\left\lfloor{#1}\right\rceil}
+% floor function
+\newcommand{\floor}[1]{\lfloor{#1}\rfloor}
+\newcommand{\floorfit}[1]{\left\lfloor{#1}\right\rfloor}
+% ceiling function
+\newcommand{\ceil}[1]{\lceil{#1}\rceil}
+\newcommand{\ceilfit}[1]{\left\lceil{#1}\right\rceil}
+% length of some vector, element
+\newcommand{\length}[1]{\lVert{#1}\rVert}
+\newcommand{\lengthfit}[1]{\left\lVert{#1}\right\rVert}
+\newcommand{\eqdef}{\mathbin{\stackrel{\rm def}{=}}}
+
+%transpose
+\newcommand{\T}{\mathsf{T}}
+
+% gram schmidt and dual bases
+\newif\ifleo\leotrue
+%\newif\ifleo\leofalse
+
+\ifleo
+
+\newcommand{\gs}[1]{{\vec #1}^\star}
+\newcommand{\du}[1]{{\vec #1}^{\vee}}
+\newcommand{\dl}[1]{{#1}^{\vee}}
+\newcommand{\dgs}[1]{{\vec #1}^{\star}}
+\newcommand{\mat}[1]{\vec{#1}}
+\newcommand{\gsm}[1]{{\mat{#1}}^\star}
+\newcommand{\dm}[1]{\mat{#1}^{\vee}}
+\newcommand{\rdm}[1]{\mat{#1}^{\wedge}}%Reverse Dual
+\newcommand{\dmt}[1]{\mat{#1}^{\vee \T}}
+\newcommand{\dgsm}[1]{\mat{#1}^{*\vee}}
+
+\else
+
+\newcommand{\gs}[1]{\widetilde{\mathbf #1}}
+\newcommand{\rgs}[1]{\accentset{\curvearrowleft}{\mathbf #1}}
+\newcommand{\du}[1]{{\mathbf #1}^{*}}
+\newcommand{\dl}[1]{{#1}^{*}}
+\newcommand{\dgs}[1]{\widetilde{\mathbf #1}^{*}}
+\newcommand{\rdgs}[1]{\accentset{\curvearrowleft}{\mathbf #1}^{*}}
+\newcommand{\mat}[1]{\vec{#1}}
+\newcommand{\gsm}[1]{\widetilde{\mat{#1}}}
+\newcommand{\dm}[1]{\mat{#1}^*}
+\newcommand{\rdm}[1]{{}^*\mat{#1}}%Reverse Dual
+\newcommand{\dmt}[1]{\mat{#1}^{*\T}}
+\newcommand{\dgsm}[1]{\widetilde{\mat{#1}}^{*}}
+
+\fi
+
+\newcommand{\vc}[1]{\vec{#1}}
+\newcommand{\mt}[1]{\mat{#1}}
+
+%\DeclareMathOperator*{\supp}{supp}
+\DeclareMathOperator*{\conv}{conv}
+\def\sym{\bigtriangleup}
+\DeclareMathOperator*{\TVD}{d_{TV}}
+\DeclareMathOperator*{\width}{width}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\cov}{cov}
+\DeclareMathOperator{\SVP}{SVP}
+\DeclareMathOperator{\HermiteSVP}{HermiteSVP}
+\DeclareMathOperator{\CVP}{CVP}
+
+%%% new commands -- norms, operators, blah blah.
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\newcommand{\enc}[1]{\langle #1 \rangle}
+\makeatletter
+\def\imod#1{\allowbreak\mkern10mu({\operator@font mod}\,\,#1)}
+\makeatother
+
+%%%% some other macros that can be cleaned up
+\newcommand{\parl}[1]{\mathcal{P}(#1)}
+\def\diag{\mathrm{diag}}
+\def\Id{\mathrm{Id}}
+\def\sph{\mathbb{S}}
+\def\suchthat{\;:\;}
+\def\psd{\succcurlyeq}
+\def\minuszero{\setminus \set{\vec 0}}
+\def\diam{\mathrm{Diam}}
+\def\core{\mathcal{C}}
+\def\st{~\mathrm{s.t.}~}
+\def\linsp{\mathrm{span}}
+\def\Gram{\mathrm{Gram}}
+\def\vol{\mathrm{vol}}
+\def\det{\mathrm{det}}
+\def\supp{\mathrm{support}}
+\def\lat{\mathcal{L}}
+\def\aff{{\rm aff}}
+\def\ext{{\rm ext}}
+\def\cone{{\rm cone}}
+\def\bd{{\rm bd}}
+\def\relbd{{\rm relbd}}
+\def\ker{{\rm ker}}
+\def\d{{\rm d}}
+
+\DeclareMathOperator*{\unif}{uniform}
+
+%\newcommand\to{\rightarrow}
+\newcommand{\from}{:}
+\newcommand\xor{\oplus}
+\newcommand\bigxor{\bigoplus}
+\newcommand{\logred}{\leq_{\log}}
+\def\iff{\Leftrightarrow}
+\def\implies{\Rightarrow}
+
+%% macros to write pseudo-code
+\floatstyle{ruled}
+\newfloat{procedure}{h!}{loa}
+\floatname{procedure}{Procedure}
+
+\newif\ifnewprog\newprogfalse
+
+\ifnewprog
+
+\newlength{\pgmtab}  %  \pgmtab is the width of each tab in the
+\setlength{\pgmtab}{1em}  %  program environment
+ \newenvironment{program}{\renewcommand{\baselinestretch}{1}%
+\begin{tabbing}\hspace{0em}\=\hspace{0em}\=%
+\hspace{\pgmtab}\=\hspace{\pgmtab}\=\hspace{\pgmtab}\=\hspace{\pgmtab}\=%
+\hspace{\pgmtab}\=\hspace{\pgmtab}\=\hspace{\pgmtab}\=\hspace{\pgmtab}\=%
+\+\+\kill}{\end{tabbing}\renewcommand{\baselinestretch}{\intl}}
+\newcommand {\BEGIN}{{\bf begin\ }}
+\newcommand {\ELSE}{{\bf else\ }}
+\newcommand {\IF}{{\bf if\ }}
+\newcommand {\FOR}{{\bf for\ }}
+\newcommand {\TO}{{\bf to\ }}
+\newcommand {\DO}{{\bf do\ }}
+\newcommand {\WHILE}{{\bf while\ }}
+\newcommand {\ACCEPT}{{\bf accept}}
+\newcommand {\REJECT}{\mbox{\bf reject}}
+\newcommand {\THEN}{\mbox{\bf then\ }}
+\newcommand {\END}{{\bf end}}
+\newcommand {\RETURN}{\mbox{\bf return\ }}
+\newcommand {\HALT}{\mbox{\bf halt}}
+\newcommand {\REPEAT}{\mbox{\bf repeat\ }}
+\newcommand {\UNTIL}{\mbox{\bf until\ }}
+\newcommand {\TRUE}{\mbox{\bf true\ }}
+\newcommand {\FALSE}{\mbox{\bf false\ }}
+\newcommand {\FORALL}{\mbox{\bf for all\ }}
+\newcommand {\DOWNTO}{\mbox{\bf down to\ }}
+
+\fi
+
+%homework stuff
+\definecolor{hintgray}{gray}{0.40}
+
+%formatting commands
+\newcounter{lecnum}
+\newcommand{\lecture}[3]{%
+%\pagestyle{myheadings}%
+%\thispagestyle{plain}%
+\newpage %
+\setcounter{lecnum}{#1}%
+\setcounter{page}{1}%
+%\rule{\linewidth}{1mm}
+
+ \thispagestyle{fancy}
+ \headheight 45pt
+ \lhead{\bf{Leiden, Spring 2024 \\ Lattices and their Algorithms} \vspace{.5em}\\ \hspace{1em}}
+ \chead{{\Large \bf Lecture #1} \vspace{.5em} \\ \hrule height .5mm \hfill \\ {\bf \Large #2}}
+ \rhead{\bf{Lecturers: L. Ducas \\ T.A.: #3} \vspace{.5em} \\ \hspace{1em}}
+ \renewcommand{\headrulewidth}{1.2pt}
+ \hspace{1em} \vspace{6pt}
+}
+
+\newcommand{\exercisedesc}[2]{%
+ \newpage %
+ \setcounter{lecnum}{#1}%
+ \setcounter{page}{1}%
+
+ \pagestyle{fancy}
+ \headheight 30pt
+ \lhead{\bf{Spring 2024 \\ Lattices and their Algorithms}}
+ \chead{\bf{\large{Exercise #1 \\ Discussion on #2}}}
+ \rhead{\bf{L. Ducas \\ Leiden}}
+ \renewcommand{\headrulewidth}{1.2pt}
+ \setlength{\headsep}{10pt}
+}
+
+\newcommand{\homeworkdesc}[2]{%
+ \newpage %
+ \setcounter{lecnum}{#1}%
+ \setcounter{page}{1}%
+
+ \pagestyle{fancy}
+ \headheight 30pt
+ \lhead{\bf{Spring 2024 \\Lattices and their Algorithms}}
+ \chead{\bf{\large{Homework #1 \\ Due #2}}}
+ \rhead{\bf{L. Ducas \\ Leiden}}
+ \renewcommand{\headrulewidth}{1.2pt}
+ \setlength{\headsep}{10pt}
+}
+
+\newcommand{\homeworksol}[1]{%
+ \newpage %
+ \setcounter{lecnum}{#1}%
+ \setcounter{page}{1}%
+
+ \pagestyle{fancy}
+ \headheight 30pt
+ \lhead{\bf{Spring 2024 \\ Lattices and their Algorithms}}
+ \chead{\bf{\large{Partial Solutions to \\ Homework #1}}}
+ \rhead{\bf{Leiden}}
+ \renewcommand{\headrulewidth}{1.2pt}
+ \setlength{\headsep}{10pt}
+}
+
+\newcommand{\exercisesol}[1]{%
+ \newpage %
+ \setcounter{lecnum}{#1}%
+ \setcounter{page}{1}%
+
+ \pagestyle{fancy}
+ \headheight 30pt
+ \lhead{\bf{Spring 2024 \\Lattices and their Algorithms}}
+ \chead{\bf{\large{Solutions to \\ Exercise #1}}}
+ \rhead{\bf{Leiden}}
+ \renewcommand{\headrulewidth}{1.2pt}
+ \setlength{\headsep}{10pt}
+}
+
+\newcommand{\exam}{%
+ \newpage %
+ \setcounter{page}{1}%
+
+ \pagestyle{fancy}
+ \headheight 30pt
+ \lhead{\bf{Spring 2024 \\ Lattices and their Algorithms}}
+ \chead{\bf{\large{Final Exam}}}
+ \rhead{\bf{L. Ducas \\ Leiden}}
+ \renewcommand{\headrulewidth}{1.2pt}
+ \setlength{\headsep}{10pt}
+}
+
+% wide pages
+\setlength{\topmargin}{-0.5in}
+\setlength{\textwidth}{6.5in} % can be up to 6.5
+\setlength{\textheight}{9in}
+\setlength{\evensidemargin}{-.1in}
+\setlength{\oddsidemargin}{-.1in}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newlength{\tpush}
+\setlength{\tpush}{2\headheight}
+\addtolength{\tpush}{\headsep}
+
+%       Usage: \htitle{title}{datelec}{dateout}
+\newcommand{\htitle}[4]{\noindent\vspace*{-\tpush}\newline\parbox{\textwidth}
+{U.C. Berkeley --- \coursenum : \coursename \hfill #1 \newline
+\courseprof \hfill #2 \newline
+\mbox{#4}\hfill Last revised #3 \newline
+\mbox{}\hrulefill\mbox{}}\vspace*{1ex}\mbox{}\newline
+\bigskip
+\begin{center}{\Large\bf #1}\end{center}
+\bigskip}
+
+%       Usage: \handout{title}{datelec}{dateout}{scribe}
+\newcommand{\handout}[4]{\thispagestyle{empty}
+ \markboth{Notes for #1: #2}{Notes for #1: #2}
+ \pagestyle{myheadings}\htitle{#1}{#2}{#3}{#4}}
+
+\newcommand{\htitlewithouttitle}[2]{\noindent\vspace*{-\tpush}\newline\parbox{6.5in}{\coursenumber : \coursetitle
+\hfill Columbia University\newline
+Handout #1\hfill#2\vspace*{-.5ex}\newline
+\mbox{}\hrulefill\mbox{}}\vspace*{1ex}\mbox{}\newline}
+
+\newcommand{\handoutwithouttitle}[2]{\thispagestyle{empty}
+ \markboth{Handout #1}{Handout #1}
+ \pagestyle{myheadings}\htitlewithouttitle{#1}{#2}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Commands to include figures
+
+
+%% PSfigure
+
+\newcommand{\PSfigure}[3]{\begin{figure}[t]
+  \centerline{\vbox to #2 {\vfil \includegraphics[height=#2]{#1} }}
+  \caption{#3}\label{#1}
+  \end{figure}}
+\newcommand{\twoPSfigures}[5]{\begin{figure*}[t]
+  \centerline{%
+    \hfil
+    \begin{tabular}{c}
+        \vbox to #3 {\vfil\includegraphics[height=#3]{#1}} \\ (a)
+    \end{tabular}
+    \hfil\hfil\hfil
+    \begin{tabular}{c}
+        \vbox to #3 {\vfil\includegraphics[height=#3]{#1}} \\ (b)
+    \end{tabular}
+    \hfil}
+  \caption{#4}
+  \label{#5}
+%  \sublabel{#1}{(a)}
+%  \sublabel{#2}{(b)}
+  \end{figure*}}
+
+
+\newcounter{fignum}
+
+% fig
+%command to insert figure. usage \fig{name}{h}{caption}
+%where name.eps is the postscript file and h is the height in inches
+%The figure is can be referred to using \ref{name}
+\newcommand{\fig}[3]{%
+\begin{minipage}{\textwidth}
+\centering\includegraphics[height=#2]{#1}
+\caption{#3} \label{#1}
+\end{minipage}
+}%
+
+
+% ffigure
+% Usage: \ffigure{name of file}{height}{caption}{label}
+\newcommand{\ffigure}[4]{\begin{figure}
+  \centerline{\vbox to #2 {\vfil \includegraphics[height=#2]{#1} }}
+  \caption{#3}\label{#4}
+  \end{figure}}
+
+% ffigureh
+% Usage: \ffigureh{name of file}{height}{caption}{label}
+\newcommand{\ffigureh}[4]{\begin{figure}[!h]
+  \centerline{\vbox to #2 {\vfil \includegraphics[height=#2]{#1} }}
+  \caption{#3}\label{#4}
+  \end{figure}}
+
+\newcommand{\solution}[1]{%
+\ifsolutions
+\vspace{-3ex}
+\noindent\textbf{Solution:} {\itshape #1}
+\vspace{3ex}
+\fi
+}
+
+\newcommand{\hint}[1]{\textcolor{hintgray}{(Hint:~ #1)}}
+
