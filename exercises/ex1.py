@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 # --- Matrix / vector generators ---
 
+# Temporary changes
 def gen_checkerboard(n, k):
     """Return an n x k checkerboard of 0s and 1s."""
     pass
