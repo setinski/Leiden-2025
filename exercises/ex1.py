@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+test edit
 # --- Matrix / vector generators ---
 
 def gen_checkerboard(n, k):
