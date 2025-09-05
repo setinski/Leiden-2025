@@ -28,6 +28,7 @@ def reverse_rows(A):
 def modify_diags(A):
     """Swap main and the anti-diagonal."""
     B = A.copy()
+    
     pass
     
     return B
@@ -81,15 +82,17 @@ def solve_via_eigenbasis(n=4):
     pass
 
     # Step 4: Solve in eigenbasis (diagonal system)
-    pass  # elementwise division since D y = b'
+    pass
 
     # Step 5: Map back to original space
     pass
 
     # Step 6: Verification
-    pass  # check if M @ x == b
+    pass
 
     # If result is correct return all relevant variables: M, x, b
+    pass
+    return None, None, None
 
 
 
@@ -122,41 +125,32 @@ if __name__ == "__main__":
     print("\n2. Lower-triangular matrix (5x5):")
     tri = gen_triangle_mat(5)
     print(tri)
-    # plot_matrix(tri, title="Lower-triangular")
     input("Press Enter to continue...")
 
-    # 3. Reverse rows
-    print("\n3. Reverse rows:")
+    # 3. Lower-triangular
+    print("\n3. Random matrix (5x5) with values from [1,5):")
+    rand_mat = gen_rand_int(5, 5, 1, 5)
+    print(rand_mat)
+    input("Press Enter to continue...")
+
+    # 4. Reverse rows
+    print("\n4. Reverse rows:")
     mat3 = np.arange(1, 10).reshape(3, 3)
     rev = reverse_rows(mat3)
     print("Original matrix:\n", mat3)
     print("Reversed rows matrix:\n", rev)
-    # plot_matrix(rev, title="Rows reversed")
     input("Press Enter to continue...")
 
-    # 4. Swap diagonals
-    print("\n4. Swap main and anti-diagonal:")
+    # 5. Swap diagonals
+    print("\n5. Swap main and anti-diagonal:")
     mat4 = np.arange(1, 10).reshape(3, 3)
     swapped = modify_diags(mat4)
-    print("Original matrix:\n", mat3)
+    print("Original matrix:\n", mat4)
     print("Swapped matrix:\n", swapped)
-    # plot_matrix(swapped, title="Diagonals swapped")
-    input("Press Enter to continue...")
-
-    # 5. Linear mapping and inverse mapping
-    print("\n6. Linear mapping and inverse mapping:")
-    A = np.array([[2, 0], [0, 3]])
-    x = np.array([1, 4])
-    y = linear_map(A, x)
-    x_new = inverse_map(A, y)
-    if np.allclose(x, x_new):
-        print("Inverse mapping successful!")
-    else:
-        print("Inverse mapping failed!")
     input("Press Enter to continue...")
 
     # 6. Projections
-    print("\n8. Projection:")
+    print("\n6. Projection:")
     v = np.array([3, 4])
     u = np.array([1, 0])
     z = np.array([0, 1])
@@ -171,8 +165,20 @@ if __name__ == "__main__":
             print("Projection successful!")
     input("Press Enter to continue...")
 
-    # 7. Solve via transformed space
-    print("\n10. Solve random system via transformed space:")
+    # 7. Linear mapping and inverse mapping
+    print("\n7. Linear mapping and inverse mapping:")
+    A = np.array([[2, 0], [0, 3]])
+    x = np.array([1, 4])
+    y = linear_map(A, x)
+    x_new = inverse_map(A, y)
+    if np.allclose(x, x_new):
+        print("Inverse mapping successful!")
+    else:
+        print("Inverse mapping failed!")
+    input("Press Enter to continue...")
+
+    # 8. Solve via transformed space
+    print("\n8. Solve random system via transformed space:")
     
     # Call the function and capture all results
     M, b, x = solve_via_eigenbasis(n=4)
