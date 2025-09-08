@@ -40,8 +40,8 @@ def reverse_rows(A):
     k = v[1]
     for i in range(n):
         for j in range(k):
-            A[i,j] = B[n-i-1,j]
-    return A
+            B[i,j] = A[n-i-1,j]
+    return B
 
 def modify_diags(A):
     """Swap main and the anti-diagonal."""
