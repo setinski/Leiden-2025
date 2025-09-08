@@ -101,11 +101,13 @@ def plot_matrix(A, title="Matrix", cmap="viridis"):
     plt.colorbar()
     plt.title(title)
     plt.show()
+    #plt.savefig("plot1.png")
 
 def plot_checkerboard(A):
     plt.imshow(A, cmap="gray", interpolation='nearest')
     plt.title("Checkerboard / Chessboard")
     plt.show()
+    #plt.savefig("plot2.png")
 
 # --- Main testing ---
 
@@ -182,4 +184,3 @@ if __name__ == "__main__":
     print("Original system M:\n", M)
     print("Right-hand side b:", b)
     print("Mapped-back solution x:", x)
-    print("This is a test message")
