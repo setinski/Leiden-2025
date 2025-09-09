@@ -5,55 +5,76 @@ import matplotlib.pyplot as plt
 
 # Temporary changes
 def gen_checkerboard(n, k):
-    """Return an n x k checkerboard of 0s and 1s."""
-    pass
+	"""Return an n x k checkerboard of 0s and 1s."""
+	A = np.ones((n,k))
+	for i in range(n):
+		t = i%2
+		for j in range(t,k,2):
+			A[i][j] = 0
+	return A
 
 
 def gen_triangle_mat(n):
-    """Return an n x n lower-triangular matrix of 1s."""
-    pass
+	"""Return an n x n lower-triangular matrix of 1s."""
+	A = np.ones((n,n))
+	for i in range(n):
+		for j in range(i):
+			 A[i][j] = 0
+	return A
 
 
 def gen_rand_int(n, k, low, high):
-    """Return an n x k matrix of random integers in [low, high)."""
-    pass
+	"""Return an n x k matrix of random integers in [low, high)."""
+	#A = np.zeros((n,k))
+	#for i in range(n):
+	#	A[i] = np.random.randint(low, high, k)
+	A = np.random.randint(low, high, (n,k))
+	return A
 
 
 # --- Matrix manipulation ---
 
 def reverse_rows(A):
-    """Return a matrix with rows reversed."""
-    pass
+	"""Return a matrix with rows reversed."""
+	n = A.shape[0]
+	k = A.shape[1]
+	B = np.ones((n,k))
+	for i in range(n):
+		for j in range(k):
+			B[i][j] = A[i][k-j-1]
+	return B
 
 
 def modify_diags(A):
-    """Swap main and the anti-diagonal."""
-    B = A.copy()
-    pass
-    
-    return B
+	"""Swap main and the anti-diagonal."""
+	B = A.copy()
+	n = A.shape[0]
+	for i in range(n):
+		B[i][i] = A[i][n-i-1]
+		B[i][n-i-1] = A[i][i]
+	return B
 
 # --- Linear algebra ---
 
 def project(x, y):
     """Return the projection of a (vector) x onto the direction of y."""
-    pass
+    return (x @ y)/(y @ y) * y
 
 
 def check_orthonormal(x, y):
     """Check if two vectors are orthonormal (orthogonal + unit length).
     Returns True if they are orthonormal, False otherwise."""
-    pass
+    return np.allclose(x @ y, 0) and np.allclose(np.linalg.norm(x), 1) and np.allclose(np.linalg.norm(y), 1)
 
 
 def linear_map(A, x):
     """Apply a linear map defined by matrix A to vector x."""
-    pass
+    return A @ x
 
 
 def inverse_map(A, y):
-    """Apply the inverse of a linear map defined by matrix A to vector y."""
-    pass
+	"""Apply the inverse of a linear map defined by matrix A to vector y."""
+	return np.linalg.inv(A) @ y
 
 
 def solve_via_eigenbasis(n=4):
@@ -71,6 +92,8 @@ def solve_via_eigenbasis(n=4):
     # Step 1: Generate a radnom linear system
     # Generate a random M that is invertible, i.e. det(M) != 0), 
     # and a random vector vector b.
+
+	
     pass
 
     # Step 2: Perform eigen-decomposition of M
@@ -115,7 +138,7 @@ if __name__ == "__main__":
     print("\n1. Checkerboard:")
     cb = gen_checkerboard(8, 8)
     print(cb)
-    plot_checkerboard(cb)
+    #plot_checkerboard(cb)
 
     input("Press Enter to continue...")
 
@@ -142,6 +165,12 @@ if __name__ == "__main__":
     print("Original matrix:\n", mat3)
     print("Swapped matrix:\n", swapped)
     # plot_matrix(swapped, title="Diagonals swapped")
+    input("Press Enter to continue...")
+
+    # 4.5 Random matrix
+    print("Return an n x k matrix of random integers in [low, high):")
+    mat45 = gen_rand_int(5,5,0,30)
+    print(mat45)
     input("Press Enter to continue...")
 
     # 5. Linear mapping and inverse mapping
