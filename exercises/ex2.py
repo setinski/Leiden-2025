@@ -31,7 +31,20 @@ def in_lattice(B, v):
     3. Check equality up to some small tolerance.
     """
 
-	pass
+	BT = np.transpose(B)
+	x = BT @ v
+	xr = np.round(x)
+	y = np.linalg.solve(BT,xr)
+	z = np.linalg.solve(B,y)
+	if np.allclose(xr, y):
+	    return True
+    else: return False
+
+"""
+B = np.array([[2,0],[3,3]])
+v = np.array([2,3])	
+print(in_lattice(B,v))
+"""
 
 ############
 # Exercise 1
@@ -53,8 +66,16 @@ def simple_rounding(B, t):
     :notes: Make use of numpy.linalg function solve and numpy function round.
     """
 
-	pass
+	tprime = np.linalg.inv(B) @ t
+	vprime = np.round(tprime)
+	v = B @ vprime
+	return v
 
+"""
+B = np.array([[2,0],[3,3]])
+v = np.array([1.1,1])	
+print(simple_rounding(B,v))
+"""
 
 ############
 # Exercise 2
@@ -80,7 +101,13 @@ def orth_proj(x, y):
     :notes: Make use of the dot product via `@` operator. Assumes `y` is non-zero.
     """
 	
-	pass
+	return x - (x@y)/(y@y)*y
+
+"""
+x = np.array([1,1,1])
+y = np.array([0,1,0])
+print(orth_proj(x,y))
+"""
 
 def Gram_Schmidt_orth(B):
 	"""
@@ -100,10 +127,16 @@ def Gram_Schmidt_orth(B):
 	of the first i rows of the lattice basis B.
 	3. All Gram-Schmidt orthogonalized vectors are pairwise orthogonal.
 	4. Each Gram-Schmidt orthogonalized vector is orthogonal to all the previous basis vectors.        
-    """
 
-	pass
-
+    v = B.shape
+    n = v[0]
+    k = v[1]
+    for i in range(k):
+		for j in range(n):
+            w = B[i,:]@B[j,:]/B[j,:]@B[j,:]*B[j,:]
+        A[i,:] = B[i,:] - w
+    return A
+	"""
 
 ############
 # Exercise 3
@@ -130,9 +163,18 @@ def nearest_plane(B, Bs, t):
 
     :notes: Make use of numpy round() function and the built-in int() conversion.
 	(!) Copy t, to avoid modying the value of the function caller.
-    """
+    
 
-	pass
+    v = np.zeros((n,1))
+    e = np.copy(t)
+    for j in range(n)
+        i = n-j-1
+        k = np.round((e @ Bs[i,;])/(Bs[i,:]@Bs[i,:]))
+		v = v + k*B[i,:]
+		e = v - k*B[i,:]
+    return v
+	"""
+
 
 ############
 # Exercise 4
@@ -157,8 +199,13 @@ def compare_norm_distrib(B, num_samples):
     :notes: Make use of numpy.linalg function norm and numpy.random function rand, as well
 	as 
     """
-
-	pass
+    n = B.shape[0]
+	Bs = Gram_Schmidt_orth(B)
+	k = np.random.randint(low = 0, high = n, size = num_samples)
+    for i in range(num_samples):
+        vB[i] = np.linalg.norm(B[k[i],:])
+	    vBs[i] = np.linalg.norm(Bs[k[i],:])
+	plot_two_hist(vB,vBs, n, save = False)
 	
 
 ############

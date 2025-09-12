@@ -51,9 +51,9 @@ def modify_diags(A):
     k = v[1]
     m = min(n,k)
     for i in range(m):
-        A[i,k-i-1] = B[i,i]
-        A[i,i] = B[i,k-i-1]
-    return A
+        B[i,k-i-1] = A[i,i]
+        B[i,i] = A[i,k-i-1]
+    return B
 
 # --- Linear algebra ---
 
@@ -115,8 +115,8 @@ def solve_via_eigenbasis(n=4):
     # Step 1: Generate a radnom linear system
     # Generate a random M that is invertible, i.e. det(M) != 0), 
     # and a random vector vector b.
-    low = -10 
-    high = 10 
+    low = 0
+    high = 30 
     #m = gen_rand_int(n, n, low, high)
     m = np.random.randn(low,high, (n,n))
     while np.linalg.det(m) == 0:
@@ -134,12 +134,7 @@ def solve_via_eigenbasis(n=4):
     bprime = inverse_map(p,b)
 
     # Step 4: Solve in eigenbasis (diagonal system)
-    y = np.linalg.solve(d,bprime)
-    #y = np.zeros((n,1))
-    #for i in range(n):
-    #    y[i] = bprime[i]/d[i,i]
-    # I think it doesn't work since the complex numbers do not get divided correctly,
-    # but I don't see how I can solve it.
+    y = bprime/d
 
     # Step 5: Map back to original space
     x = linear_map(p, y)
@@ -148,7 +143,7 @@ def solve_via_eigenbasis(n=4):
     bb = linear_map(m, x)
 
     # If result is correct return all relevant variables: M, x, b
-    if bb.all() == b.all():
+    if np.allclose(b,bb):
         return m, x, b
     else: return None, None, None
 
