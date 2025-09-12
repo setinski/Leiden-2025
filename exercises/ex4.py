@@ -36,24 +36,6 @@ def lagrange_reduce(B):
     pass
 
 
-# def lagrange_reduce(B):
-# 	""" Given a basis with two rows as input, apply lagrange reduction to B (modified 
-# 	in place). 
-# 	Also output the transformation matrix U, sending the initial basis to the final basis
-# 	"""
-# 	U = np.identity(2, dtype="int64")
-# 	first = True
-# 	while first or np.linalg.norm(B[1]) < np.linalg.norm(B[0]):
-# 		B[[0, 1]] = B[[1, 0]]
-# 		U[[0, 1]] = U[[1, 0]]
-# 		first = False
-# 		k = int(round(B[0].dot(B[1]) / B[0].dot(B[0])))
-# 		B[1] -= k * B[0]
-# 		U[1] -= k * U[0]
-
-# 	return U
-
-
 ############
 # Exercise 2
 # Implement a the Size-Reduction Algorithm (in place) on a basis input B. 
@@ -126,28 +108,6 @@ def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=True):
 	
 	pass
 
-
-
-# def LLL(B, epsilon=0.01, anim=True):
-# 	n,_ = B.shape
-# 	Bs = Gram_Schmidt_orth(B)
-# 	size_reduce(B, Bs)
-
-# 	while True:
-# 		yield [log(np.linalg.norm(x)) for x in Bs]
-# 		for i in range(n):
-# 			if i==n-1:
-# 				return
-# 			if np.linalg.norm(Bs[i]) > (gamma_2+epsilon) * np.linalg.norm(Bs[i+1]):
-# 				break
-# 		# We have found an index i to be Lagrange-reduced
-# 		x1 = np.copy(Bs[i])
-# 		x2 = Bs[i+1] + (B[i+1].dot(Bs[i]) / (Bs[i].dot(Bs[i]))) * Bs[i]
-# 		X = np.array([x1, x2])
-# 		U = lagrange_reduce(X)
-# 		B[i:i+2] = U.dot(B[i:i+2])
-# 		Bs = Gram_Schmidt_orth(B)
-# 		size_reduce(B, Bs)
 
 ############
 # Helper functions
