@@ -30,7 +30,7 @@ def in_lattice(B, v):
     :notes: Make use of numpy.linalg function solve and numpy functions round and allclose.
     """
 
-	proba
+	pass
 
 
 ############
