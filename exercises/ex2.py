@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from generic_functions import generate_lattice_points, draw_basis_vectors, draw_fundamental_regions
 from test_bases import B2, B4, B24
 
+save_counter = 0
+
 # The exercises comprises of function to be implemented:
 # Replace the keyword "pass" with your implementation of the desired function
 
@@ -157,25 +159,25 @@ def compare_norm_distrib(B, num_samples):
 # Helper functions
 ############
 
-def plot_two_hist(data_SR, data_NP, n, save=False):
-	"""Take is input two lists and plot two histograms"""
+def plot_two_hist(data_SR, data_NP, n, save=True):
+    """Take is input two lists and plot two histograms"""
 	
-	_, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
-	_ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
+    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
+    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
 	
-	plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
-	plt.legend()
+    plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
+    plt.legend()
 	
-	if save:
-		plt.savefig("ParallelepipedDistDim%d.png"%n)
-	else:
-		plt.show()
+    if save:
+        plt.savefig("ParallelepipedDistDim%d.png"%n)
+    else:
+        plt.show()
 	
-	plt.clf()
-	plt.close()
+    plt.clf()
+    plt.close()
 	
 
-def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title=""):
+def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=True):
     """Draw lattice tiling, points, basis, and optional extras."""
     plt.figure(figsize=(6, 6))
 
@@ -210,7 +212,17 @@ def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, 
     plt.gca().set_aspect("equal", adjustable="box")
     plt.title(title)
     plt.legend()
-    plt.show()
+
+    if save:
+        global save_counter
+        filename = f"Lattice_{B.shape[0]}_{save_counter}.png"
+        plt.savefig(filename)
+        save_counter += 1
+    else:
+        plt.show()
+
+    plt.clf()
+    plt.close()
 
 
 ############
