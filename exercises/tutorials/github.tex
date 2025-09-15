@@ -10,7 +10,7 @@
     basicstyle=\ttfamily\footnotesize,
     breaklines=true,
     frame=single,
-    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
+    postbreak=\mbox{\textcolor{red}{$\\hookrightarrow$}\space}
 }
 
 \title{Short GitHub Tutorial}
@@ -35,14 +35,50 @@ git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 \end{lstlisting}
 
+\section{Authentication Options}
+You can authenticate with GitHub in two main ways:
+
+\subsection{SSH Keys (Recommended)}
+To avoid entering your password every time, set up an SSH key and add it to the SSH agent.
+
+\begin{lstlisting}
+# Generate a new SSH key
+ssh-keygen -t ed25519 -C "you@example.com"
+
+# Start the ssh-agent in the background
+eval "$(ssh-agent -s)"
+
+# Add your SSH private key to the agent
+ssh-add ~/.ssh/id_ed25519
+\end{lstlisting}
+
+Copy the public key to GitHub under \texttt{Settings > SSH and GPG keys}.
+
+\subsection{HTTPS with a Password Manager}
+Alternatively, you can use HTTPS URLs for Git and store your credentials using a helper like Git Credential Manager or pass.
+
+\begin{lstlisting}
+# Example of cloning with HTTPS
+git clone https://github.com/username/repo-name.git
+
+# When prompted, enter your GitHub username and personal access token (PAT) 
+# instead of password
+\end{lstlisting}
+
+This method is simpler to set up but requires entering a token once or storing it securely.
+
 \section{Creating a New Repository}
 Go to \url{https://github.com}, log in, and click \texttt{New Repository}. Name it and choose options like \texttt{Initialize with README}.
 
 \section{Cloning a Repository}
-Clone a remote repo to your local machine:
+Clone a remote repo to your local machine (using SSH or HTTPS as above).
 
 \begin{lstlisting}
-git clone https://github.com/username/repo-name.git
+# SSH
+git clone git@github.com:username/repo-name.git
+
+# HTTPS
+# git clone https://github.com/username/repo-name.git
 \end{lstlisting}
 
 \section{Basic Workflow}
@@ -74,19 +110,11 @@ Branches allow you to work on features independently:
 git checkout -b feature-branch
 \end{lstlisting}
 
-\section{Merging Branches}
-Switch back to main and merge your feature:
-
-\begin{lstlisting}
-git checkout main
-git merge feature-branch
-\end{lstlisting}
-
-\section{Course Repository}
+\section{Working With Personal Branches}
 In this course, we will use the following GitHub repository:
 
 \begin{quote}
-\url{https://github.com/lducas/Leiden-2025}
+\url{https://github.com/setinski/Leiden-2025} 
 \end{quote}
 
 \noindent Each student is required to:
@@ -109,6 +137,28 @@ git checkout -b your-name
 git add .
 git commit -m "Add my solutions"
 git push origin your-name
+\end{lstlisting}
+
+\section{Keeping Your Branch Updated}
+When you are working on a personal branch, you should regularly pull updates from the main branch:
+
+\begin{lstlisting}
+# Make sure you are on your branch
+git checkout your-name
+
+# Option 1: Fetch + Merge
+git fetch origin
+git merge origin/main
+
+# Option 2: Use pull directly
+git pull origin main
+\end{lstlisting}
+
+\section{Switching Branches}
+You can always switch back to the main branch using:
+
+\begin{lstlisting}
+git checkout main
 \end{lstlisting}
 
 \end{document}
