@@ -32,6 +32,8 @@ def in_lattice(B, v):
 
 	pass
 
+    "temporary change"
+
 
 ############
 # Exercise 1
