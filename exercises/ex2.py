@@ -104,13 +104,10 @@ def Gram_Schmidt_orth(B):
     """
 	n = B.shape[0]
 	A = B.copy()
+	A = A.astype(float)
 	for i in range(1,n):
 		for j in range(i):
-			print("i=",i,"j=",j)
-			print("orth_proj=", orth_proj(B[i].copy(), A[j].copy()))
-			print("A[i] before change", A[i][:])
-			A[i] = A[i].copy() - orth_proj(B[i].copy(), A[j].copy())
-			print("A[i] after change", A[i][:])
+			A[i] = A[i] - orth_proj(B[i], A[j])
 	return A
 
 
@@ -140,8 +137,14 @@ def nearest_plane(B, Bs, t):
     :notes: Make use of numpy round() function and the built-in int() conversion.
 	(!) Copy t, to avoid modying the value of the function caller.
     """
-
-	pass
+	n = B.shape[0]
+	v = np.zeros((1,n))
+	e = t.copy()
+	for i in range(n-1,-1,-1):
+		k = int(np.round((e @ Bs[i])/(Bs[i] @ Bs[i])))
+		v += k*B[i]
+		e -= k*B[i]
+	return v.reshape((n,))
 
 ############
 # Exercise 4
@@ -196,20 +199,30 @@ def plot_two_hist(data_SR, data_NP, n, save=False):
 # Main runner
 ############
 if __name__ == "__main__":
-    plot_bases = [B2, B4]
-	
+    plot_bases = [B2, B4, B24]
+
 for B in plot_bases:
 	print("\n========================================")
 	print("Running in_lattice for basis with shape:", B.shape)
 	print("For first basis vector:", in_lattice(B,B[0]))
-	v = np.random.uniform(-100,100,B.shape)
-	print("For a random vector", in_lattice(B, v))
+	v = np.random.uniform(-100,100,B.shape[0])
+	print("For a random vector:", in_lattice(B, v))
 input("Press Enter to continue...")
+
+for B in plot_bases:
+	print("\n========================================")
+	print("Testing Babai for basis with shape:", B.shape)
+	t = np.random.uniform(-100,100,B.shape[0])
+	v = nearest_plane(B, Gram_Schmidt_orth(B),t)
+	print("Is babai output in lattice?", in_lattice(B,v))
+input("Press Enter to continue...")
+
 for B in plot_bases:
 	print("\n========================================")
 	print("Running compare_norm_distrib for basis with shape:", B.shape)
 	compare_norm_distrib(B, 50000)
 input("Press Enter to continue...")
+
 for B in plot_bases:
 	print("\n========================================")
 	print("Testing Gram_Schmidt_orth for basis with shape:", B.shape )
@@ -219,18 +232,18 @@ for B in plot_bases:
 		print("Correct")
 	else:
 		print("Incorrect")
-	input("Press Enter to continue...")
-	print("A=", A)
-	print("B=", B)
 	print("Comparing the spans of first i rows")
+	check = True
 	for i in range(0,B.shape[0]):
 		C = np.concatenate((A[0:i+1][:],B[0:i+1][:]), axis = 0)
-		print("C=", C)
-		if np.linalg.matrix_rank(A[0:i+1][:]) == np.linalg.matrix_rank(C) and np.linalg.matrix_rank(B[0:i+1][:]) == np.linalg.matrix_rank(C):
-			print("Span is the same for the first", i+1,"vectors")
-		else:
-			print("Span is different for the first", i+1,"vectors")
-	input("Press Enter to continue...")
+		if np.linalg.matrix_rank(A[0:i+1][:]) != np.linalg.matrix_rank(C) or np.linalg.matrix_rank(B[0:i+1][:]) != np.linalg.matrix_rank(C):
+			check = False
+	if check == True:
+		print("All spans are the same")
+	else:
+		print("At least one span is wrong")
+input("Press Enter to continue...")
+
 
 """
 1. The first Gram-Schmidt orthogonalization vector is the first basis vector.
