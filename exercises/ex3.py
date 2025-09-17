@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
-from sol2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
+from ex2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
+import math
+from itertools import product
 
 # The exercises comprises of function to be implemented: replace the keyword "pass"
 # with your implementation.
@@ -29,9 +31,28 @@ def enumeration(x, r):
 
     :notes: Make use of numpy concatenate() function and the built-in append function.
     """
+    s = math.floor(r)
+    m = np.zeros((x.shape[0],2*s+1), dtype=int)
+    v = np.zeros(x.shape, dtype=int)
+    y = np.zeros((1, 2*s+1), dtype=int)
+    list = []
+    for i in range(x.shape[0]):
+        for j in range(2*s+1):
+            m[i,j] = x[i]-s+j
+    for i in range(2*s+1):
+        y[0,i] = i
+    for w in product(y[0], repeat=x.shape[0]):
+        for i in range(x.shape[0]):
+            v[i] = m[i,w[i]]
+        t = v.copy()
+        list.append(t)
+    return list
 
-    pass
-
+"""
+x = np.array([1,1])
+r = 1
+print(enumeration(x,r))
+"""
 
 ############
 # Exercise 2
@@ -54,9 +75,14 @@ def simple_enumeration(B, t, l):
 
 	:notes: Make use of numpy.linalg function solve and numpy function round.
 	"""
-
-    pass
-
+    BT = np.transpose(B)
+    c = np.zeros(t.shape)
+    tprime = np.linalg.inv(np.transpose(B)) @ t
+    for vprime in enumeration(tprime, l/2):
+        v = BT @ vprime
+        if (v-t)@(v-t) < (c-t)@(c-t):
+            c = v
+    return c
 
 ############
 # Exercise 3
@@ -83,7 +109,6 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     """
 
     pass
-
 
 ############
 # Exercise 4
