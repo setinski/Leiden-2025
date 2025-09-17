@@ -5,56 +5,96 @@ import matplotlib.pyplot as plt
 
 def gen_checkerboard(n, k):
     """Return an n x k checkerboard of 0s and 1s."""
-    pass
-
+    m = np.ones((n,k))
+    for i in range(n):
+        for j in range(k):
+            if j % 2 == i % 2:
+                m[i,j] = 0
+    return m
 
 def gen_triangle_mat(n):
     """Return an n x n lower-triangular matrix of 1s."""
-    pass
-
+    m = np.ones((n,n))
+    for i in range(n):
+        for j in range(n):
+            if i < j:
+                m[i,j] = 0
+    return m
 
 def gen_rand_int(n, k, low, high):
     """Return an n x k matrix of random integers in [low, high)."""
-    pass
-
+    m = np.ones((n,k))
+    for i in range(n):
+        for j in range(k):
+            m[i,j] = np.random.randint(low, high)
+    return m
 
 # --- Matrix manipulation ---
 
 def reverse_rows(A):
     """Return a matrix with rows reversed."""
-    pass
-
+    B = np.copy(A)
+    v = A.shape
+    n = v[0]
+    k = v[1]
+    for i in range(n):
+        for j in range(k):
+            A[i,j] = B[i,k-j-1]
+    return A
 
 def modify_diags(A):
     """Swap main and the anti-diagonal."""
-    B = A.copy()
-    
-    pass
-    
-    return B
+    B = np.copy(A)
+    v = A.shape
+    n = v[0]
+    k = v[1]
+    m = min(n,k)
+    for i in range(m):
+        A[i,k-i-1] = B[i,i]
+        A[i,i] = B[i,k-i-1]
+    return A
 
 # --- Linear algebra ---
 
 def project(x, y):
     """Return the projection of a (vector) x onto the direction of y."""
-    pass
-
+    yy = 0
+    xy = 0
+    s = 0
+    if x.shape == y.shape:
+        n = x.shape[0]
+        for i in range(n):
+            yy = yy + y[i]*y[i]
+            xy = xy + x[i]*y[i]
+        s = xy / yy
+        for i in range(n):
+            x[i] = s*y[i]
+    return x
 
 def check_orthonormal(x, y):
     """Check if two vectors are orthonormal (orthogonal + unit length).
     Returns True if they are orthonormal, False otherwise."""
-    pass
-
+    d = 0
+    u = 0
+    v = 0
+    if x.shape == y.shape:
+        n = x.shape[0]
+        for i in range(n):
+            d = d + x[i]*y[i]
+            u = u + x[i]*x[i]
+            v = v + y[i]*y[i]
+        if d == 0 and np.sqrt(u) == 1 and np.sqrt(v) == 1:
+            return True
+        else: return False
 
 def linear_map(A, x):
     """Apply a linear map defined by matrix A to vector x."""
-    pass
-
+    return A @ x
 
 def inverse_map(A, y):
     """Apply the inverse of a linear map defined by matrix A to vector y."""
-    pass
-
+    B = np.linalg.inv(A)
+    return B @ y
 
 def solve_via_eigenbasis(n=4):
     """
@@ -71,30 +111,40 @@ def solve_via_eigenbasis(n=4):
     # Step 1: Generate a radnom linear system
     # Generate a random M that is invertible, i.e. det(M) != 0), 
     # and a random vector vector b.
-    pass
+    low = -10 #Is it possible to use -infinity here ...
+    high = 10 # ...and infinity here?
+    m = gen_rand_int(n, n, low, high)
+    while np.linalg.det(m) == 0:
+        m = gen_rand_int(n, n, low, high)
+    b = gen_rand_int(n, 1, low, high)
 
     # Step 2: Perform eigen-decomposition of M
     # Make use of numpy's eigenvalue decomposition function np.linalg.eig,
     # and the numpy function np.diag.
-    pass
+    d = np.diag(np.linalg.eig(m)[0])
 
     # Step 3: Express b in the eigenbasis
-    pass
+    p = np.linalg.eig(m)[1]
+    bprime = inverse_map(p,b)
 
     # Step 4: Solve in eigenbasis (diagonal system)
-    pass
+    y = np.linalg.solve(d,bprime)
+    #y = np.zeros((n,1))
+    #for i in range(n):
+    #    y[i] = bprime[i]/d[i,i]
+    # I think it doesn't work since the complex numbers do not get divided correctly,
+    # but I don't see how I can solve it.
 
     # Step 5: Map back to original space
-    pass
+    x = linear_map(p, y)
 
     # Step 6: Verification
-    pass
+    bb = linear_map(m, x)
 
     # If result is correct return all relevant variables: M, x, b
-    pass
-    return None, None, None
-
-
+    if bb.all() == b.all():
+        return m, x, b
+    else: return None, None, None
 
 # --- Plotting ---
 
@@ -117,8 +167,7 @@ if __name__ == "__main__":
     print("\n1. Checkerboard:")
     cb = gen_checkerboard(8, 8)
     print(cb)
-    plot_checkerboard(cb)
-
+    #plot_checkerboard(cb)
     input("Press Enter to continue...")
 
     # 2. Lower-triangular
