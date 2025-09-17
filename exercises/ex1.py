@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def gen_checkerboard(n, k):
     """Return an n x k checkerboard of 0s and 1s."""
-    m = np.ones((n,k), dtype=int)
+    m = np.ones((n,k))
     for i in range(n):
         for j in range(k):
             if j % 2 == i % 2:
@@ -14,7 +14,7 @@ def gen_checkerboard(n, k):
 
 def gen_triangle_mat(n):
     """Return an n x n lower-triangular matrix of 1s."""
-    m = np.ones((n,n), dtype=int)
+    m = np.ones((n,n))
     for i in range(n):
         for j in range(n):
             if i < j:
@@ -23,12 +23,11 @@ def gen_triangle_mat(n):
 
 def gen_rand_int(n, k, low, high):
     """Return an n x k matrix of random integers in [low, high)."""
-    m = np.ones((n,k), dtype=int)
+    m = np.ones((n,k))
     for i in range(n):
         for j in range(k):
             m[i,j] = np.random.randint(low, high)
     return m
-    #return np.random.randint(low,high,(n,k))
 
 # --- Matrix manipulation ---
 
@@ -40,8 +39,8 @@ def reverse_rows(A):
     k = v[1]
     for i in range(n):
         for j in range(k):
-            B[i,j] = A[n-i-1,j]
-    return B
+            A[i,j] = B[i,k-j-1]
+    return A
 
 def modify_diags(A):
     """Swap main and the anti-diagonal."""
@@ -59,37 +58,34 @@ def modify_diags(A):
 
 def project(x, y):
     """Return the projection of a (vector) x onto the direction of y."""
-    #yy = 0
-    #xy = 0
-    #s = 0
-    #if x.shape == y.shape:
-    #    n = x.shape[0]
-    #    for i in range(n):
-    #        yy = yy + y[i]*y[i]
-    #        xy = xy + x[i]*y[i]
-    #    s = xy / yy
-    #    for i in range(n):
-    #        x[i] = s*y[i]
-    #return x
-    return (x@y)/(y@y)*y
+    yy = 0
+    xy = 0
+    s = 0
+    if x.shape == y.shape:
+        n = x.shape[0]
+        for i in range(n):
+            yy = yy + y[i]*y[i]
+            xy = xy + x[i]*y[i]
+        s = xy / yy
+        for i in range(n):
+            x[i] = s*y[i]
+    return x
 
 def check_orthonormal(x, y):
     """Check if two vectors are orthonormal (orthogonal + unit length).
     Returns True if they are orthonormal, False otherwise."""
-    #d = 0
-    #u = 0
-    #v = 0
-    #if x.shape == y.shape:
-    #    n = x.shape[0]
-    #    for i in range(n):
-    #        d = d + x[i]*y[i]
-    #        u = u + x[i]*x[i]
-    #        v = v + y[i]*y[i]
-    #   if d == 0 and np.sqrt(u) == 1 and np.sqrt(v) == 1:
-    #        return True
-    #    else: return False
-    if np.allclose(x@y,0) and np.allclose(np.linalg.norm(x),1) and np.allclose(np.linalg.norm(y)):
-        return True
+    d = 0
+    u = 0
+    v = 0
+    if x.shape == y.shape:
+        n = x.shape[0]
+        for i in range(n):
+            d = d + x[i]*y[i]
+            u = u + x[i]*x[i]
+            v = v + y[i]*y[i]
+        if d == 0 and np.sqrt(u) == 1 and np.sqrt(v) == 1:
+            return True
+        else: return False
 
 def linear_map(A, x):
     """Apply a linear map defined by matrix A to vector x."""
@@ -115,14 +111,12 @@ def solve_via_eigenbasis(n=4):
     # Step 1: Generate a radnom linear system
     # Generate a random M that is invertible, i.e. det(M) != 0), 
     # and a random vector vector b.
-    low = -10 
-    high = 10 
-    #m = gen_rand_int(n, n, low, high)
-    m = np.random.randn(low,high, (n,n))
+    low = -10 #Is it possible to use -infinity here ...
+    high = 10 # ...and infinity here?
+    m = gen_rand_int(n, n, low, high)
     while np.linalg.det(m) == 0:
         m = gen_rand_int(n, n, low, high)
-    #b = gen_rand_int(n, 1, low, high)
-    b = np.random.randn(low,high, (n,1))
+    b = gen_rand_int(n, 1, low, high)
 
     # Step 2: Perform eigen-decomposition of M
     # Make use of numpy's eigenvalue decomposition function np.linalg.eig,
@@ -173,7 +167,7 @@ if __name__ == "__main__":
     print("\n1. Checkerboard:")
     cb = gen_checkerboard(8, 8)
     print(cb)
-    plot_checkerboard(cb)
+    #plot_checkerboard(cb)
     input("Press Enter to continue...")
 
     # 2. Lower-triangular
