@@ -53,10 +53,9 @@ def simple_rounding(B, t):
 
     :notes: Make use of numpy.linalg function solve and numpy function round.
     """
-	
-
-	pass
-
+	x = np.linalg.solve(B.transpose(),t)
+	xr = np.round(x)
+	return B.transpose() @ xr
 
 ############
 # Exercise 2
@@ -207,6 +206,21 @@ for B in plot_bases:
 	print("For first basis vector:", in_lattice(B,B[0]))
 	v = np.random.uniform(-100,100,B.shape[0])
 	print("For a random vector:", in_lattice(B, v))
+input("Press Enter to continue...")
+
+for B in plot_bases:
+	print("\n========================================")
+	print("Testing simple rounding for basis with shape:", B.shape)
+	v = np.random.uniform(-100,100,B.shape[0])
+	sr = simple_rounding(B,v)
+	print("Is the result in the lattice?", in_lattice(B,sr))
+	print("Is the result close to the target?")
+	e = v - sr
+	ep = np.linalg.solve(B.transpose(),e)
+	if np.round(ep).all() == 0:
+		print("Yes")
+	else:
+		print("No")
 input("Press Enter to continue...")
 
 for B in plot_bases:
