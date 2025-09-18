@@ -6,8 +6,6 @@ from test_bases import B2, B4, B24
 
 save_counter = 0
 
-save_counter = 0
-
 # The exercises comprises of function to be implemented:
 # Replace the keyword "pass" with your implementation of the desired function
 
@@ -32,8 +30,11 @@ def in_lattice(B, v):
     :notes: Make use of numpy.linalg function solve and numpy functions round and allclose.
     """
 
-	pass
-
+	x = v @ np.linalg.inv(B)
+	# Alternative option:
+    # x = np.linalg.solve(B.transpose(), v)
+	xr = np.round(x)
+	return np.allclose(x, xr)
 
 ############
 # Exercise 1
@@ -55,7 +56,11 @@ def simple_rounding(B, t):
     :notes: Make use of numpy.linalg function solve and numpy function round.
     """
     
-    pass
+    x = t @ np.linalg.inv(B)
+	# Alternative option:
+    # x = np.linalg.solve(B.transpose(), t)
+    #xr = np.round(x)
+    return xr @ B
 
 
 ############
@@ -81,8 +86,7 @@ def orth_proj(x, y):
     if np.allclose(y, 0):
         return 0
 	
-    pass
-
+    return (x @ y) / (y @ y) * y
 
 def Gram_Schmidt_orth(B):
 	"""
@@ -97,7 +101,15 @@ def Gram_Schmidt_orth(B):
     :rtype: numpy.ndarray   
     """
 
-	pass
+	n,_ = B.shape
+	Bs = np.zeros(B.shape, dtype=float)
+
+	for i in range(n):
+		Bs[i] = B[i]
+		for j in range(i):
+			Bs[i] -= orth_proj(B[i], Bs[j])
+
+	return Bs
 
 
 ############
@@ -126,7 +138,17 @@ def nearest_plane(B, Bs, t):
     :notes: Make use of numpy round() function and the built-in int() conversion.
     """
 
-	pass
+	n,d = B.shape
+
+	e = t
+	v = zeros(d, dtype=int)
+
+	for i in reversed(range(n)):
+		k = int(np.round((e @ Bs[i]) / (Bs[i]@Bs[i])))
+		e -= k * B[i]
+		v += k * B[i]
+
+	return v
 
 ############
 # Exercise 4
@@ -154,25 +176,25 @@ def compare_norm_distrib(B, num_samples):
     - Visualization is handled by `plot_two_hist` provided below.
     """
 
-	pass
+	n, _ = B.shape
+	Bs = Gram_Schmidt_orth(B)
+
+	data_B = [np.linalg.norm((np.random.rand(n) - .5) @ B) for x in range(num_samples)]
+	data_Bs = [np.linalg.norm((np.random.rand(n) - .5) @ Bs) for x in range(num_samples)]
+	
+	plot_two_hist(data_B, data_Bs, n)
 	
 
 ############
 # Helper functions
 ############
 
-def plot_two_hist(data_SR, data_NP, n, save=True):
-    """Take is input two lists and plot two histograms"""
-def plot_two_hist(data_SR, data_NP, n, save=True):
+def plot_two_hist(data_SR, data_NP, n, save=False):
     """Take is input two lists and plot two histograms"""
 	
     _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
     _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
-    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
-    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
 	
-    plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
-    plt.legend()
     plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
     plt.legend()
 	
@@ -180,19 +202,12 @@ def plot_two_hist(data_SR, data_NP, n, save=True):
         plt.savefig("ParallelepipedDistDim%d.png"%n)
     else:
         plt.show()
-    if save:
-        plt.savefig("ParallelepipedDistDim%d.png"%n)
-    else:
-        plt.show()
 	
-    plt.clf()
-    plt.close()
     plt.clf()
     plt.close()
 	
 
-def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=True):
-def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=True):
+def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=False):
     """Draw lattice tiling, points, basis, and optional extras."""
     plt.figure(figsize=(6, 6))
 
@@ -235,17 +250,6 @@ def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, 
         save_counter += 1
     else:
         plt.show()
-
-    if save:
-        global save_counter
-        filename = f"Lattice_{B.shape[0]}_{save_counter}.png"
-        plt.savefig(filename)
-        save_counter += 1
-    else:
-        plt.show()
-
-    plt.clf()
-    plt.close()
 
     plt.clf()
     plt.close()
@@ -290,8 +294,8 @@ if __name__ == "__main__":
     input("Press Enter to continue...")
 
     ##### 3. Nearest-plane (norm distribution) #####
-    designed_bases = [B2, B4, B24]
-    for B in designed_bases:
+    other_basis = [B2, B4, B24]
+    for B in other_basis:
         print("\n=== Nearest-Plane (Norm Distribution) ===")
         print("Running compare_norm_distrib for basis with shape:", B.shape)
         compare_norm_distrib(B, 50000)
