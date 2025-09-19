@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from generic_functions import generate_lattice_points, draw_basis_vectors, draw_fundamental_regions
 from test_bases import B2, B4, B24
 
+save_counter=0
+
 # The exercises comprises of function to be implemented:
 # Replace the keyword "pass" with your implementation of the desired function
 
@@ -94,10 +96,10 @@ def Gram_Schmidt_orth(B):
     #four tests
     for i in range(0,n):
         for j in range(0,i):
-            if allclose(u[i,:]@u[j,:],0):
+            if np.allclose(u[i,:]@u[j,:],0):
                 return True
-    if(np.allclose(u[1,:],B[1,:]) and )
-    return u
+    if(np.allclose(u[1,:],B[1,:])):
+        return u
     """
     Perform Gram-Schmidt orthogonalization on the rows of a matrix `B`.
 
