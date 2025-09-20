@@ -107,15 +107,30 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
              that satisfy the radius constraint.
     :rtype: list[numpy.ndarray]
     """
+    liosta = []
+    h = 0
+    l = 0
+    j = ((np.zeros((t.shape))-t)@b1)/(b1@b1)
+    while ((j+h)*(b1))@((j+h)*(b1)) <= r**2:
+        liosta.append(h*b1)
+        h = h + 1
+    while ((j-l-1)*b1)@((j-l-1)*b1) <= r**2:
+        liosta.append((-l-1)*b1)
+        l = l + 1
+    return liosta
 
-    pass
+b1 = np.array([1,2])
+x = b1
+t = np.array([1,1])
+r = 3.5
+print(fincke_pohst_1d_enumeration(b1, x, t, r))
 
 ############
 # Exercise 4
 # Implement the Fincke-Pohst Enumeration Algorithm
 ############
 
-def fincke_pohst_enumeration(B, t, r):
+def fincke_pohst_enumeration(B, t, r): #not finished yet
     """
     Enumerate all lattice vectors within distance `r` from `t`
     in the lattice defined by basis `B`.
@@ -133,9 +148,43 @@ def fincke_pohst_enumeration(B, t, r):
     :notes: Make use of np.linalg.lstsq (i.e. the least-square method) or np.linalg.pinv
     for matrix pseudo inversion.
     """
+    if B.shape[0] == 1:
+        x = np.zeros((B.shape[0], 1))
+        return fincke_pohst_1d_enumeration(B[0],x,t,r)
+    S = []
+    Bprime = np.zeros((B.shape[0]-1,B.shape[1]))
+    for i in range(B.shape[0]-1):
+        Bprime[i] = B[i+1]-orth_proj(B[i+1],B[0])
+    Sprime = fincke_pohst_enumeration(Bprime, t - orth_proj(t,B[0]),r)
+    for elt in Sprime:
+        print("elt=",elt)
+        rho = r**2 - elt@elt #originally we would have to take the square root
+        print("rho=",rho)
+        print("pseudoinv=",np.linalg.pinv(Bprime))
+        y = np.linalg.pinv(Bprime) @ np.transpose(elt)
+        print("y=",y)
+        z = np.array([0])
+        yprime = np.concatenate((z,y), axis = None)
+        print(yprime)
+        x = B @ yprime
+        print(x)
+        h = 0
+        l = 0
+        j = ((x - t) @ B[0]) / (B[0] @ B[0])
+        while ((j + h) * (B[0])) @ ((j + h) * (B[0])) <= rho**2:
+            S.append(x+h * B[0])
+            h = h + 1
+        while ((j - l - 1) * B[0]) @ ((j - l - 1) * B[0]) <= rho**2:
+            S.append(x+(-l - 1) * B[0])
+            l = l + 1
+    return S
 
-    pass
-    
+"""
+B = np.array([[1,2],[3,4]])
+t = np.array([1,1])
+r = 2
+fincke_pohst_enumeration(B,t,r)
+"""
 
 ############
 # Helper functions
