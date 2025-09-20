@@ -59,7 +59,7 @@ def simple_rounding(B, t):
     x = t @ np.linalg.inv(B)
 	# Alternative option:
     # x = np.linalg.solve(B.transpose(), t)
-    #xr = np.round(x)
+    xr = np.round(x)
     return xr @ B
 
 
@@ -140,7 +140,7 @@ def nearest_plane(B, Bs, t):
 
 	n,d = B.shape
 
-	e = t
+	e = np.copy(t)
 	v = zeros(d, dtype=int)
 
 	for i in reversed(range(n)):
