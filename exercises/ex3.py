@@ -108,21 +108,22 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     :rtype: list[numpy.ndarray]
     """
     liosta = []
+    j = ((x-t)@b1)/(b1@b1)
+    floor = -math.floor(j)
     h = 0
     l = 0
-    j = ((np.zeros((t.shape))-t)@b1)/(b1@b1)
-    while ((j+h)*(b1))@((j+h)*(b1)) <= r**2:
-        liosta.append(h*b1)
+    while ((j+floor+h)*(b1))@((j+floor+h)*(b1)) <= r**2:
+        liosta.append((floor+h)*b1)
         h = h + 1
-    while ((j-l-1)*b1)@((j-l-1)*b1) <= r**2:
-        liosta.append((-l-1)*b1)
+    while ((j+floor-l-1)*b1)@((j+floor-l-1)*b1) <= r**2:
+        liosta.append((floor-l-1)*b1)
         l = l + 1
     return liosta
 
 b1 = np.array([1,2])
-x = b1
-t = np.array([1,1])
-r = 3.5
+t = np.array([10,10])
+x = np.zeros((t.shape))
+r = 5
 print(fincke_pohst_1d_enumeration(b1, x, t, r))
 
 ############
@@ -149,7 +150,7 @@ def fincke_pohst_enumeration(B, t, r): #not finished yet
     for matrix pseudo inversion.
     """
     if B.shape[0] == 1:
-        x = np.zeros((B.shape[0], 1))
+        x = np.zeros(t.shape)
         return fincke_pohst_1d_enumeration(B[0],x,t,r)
     S = []
     Bprime = np.zeros((B.shape[0]-1,B.shape[1]))
