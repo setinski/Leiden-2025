@@ -5,96 +5,60 @@ import matplotlib.pyplot as plt
 
 def gen_checkerboard(n, k):
     """Return an n x k checkerboard of 0s and 1s."""
-    m = np.ones((n, k), dtype=int)
+    A = np.zeros((n, k), dtype=int)
     for i in range(n):
         for j in range(k):
-            if j % 2 == i % 2:
-                m[i, j] = 0
-    return m
+            A[i, j] = (i + j) % 2
+    return A
 
 
 def gen_triangle_mat(n):
     """Return an n x n lower-triangular matrix of 1s."""
-    m = np.ones((n, n), dtype=int)
+    A = np.zeros((n, n), dtype=int)
     for i in range(n):
-        for j in range(n):
-            if i < j:
-                m[i, j] = 0
-    return m
+        for j in range(i+1):
+            A[i, j] = 1
+    return A
 
 
 def gen_rand_int(n, k, low, high):
     """Return an n x k matrix of random integers in [low, high)."""
-    m = np.ones((n, k), dtype=int)
-    for i in range(n):
-        for j in range(k):
-            m[i, j] = np.random.randint(low, high)
-    return m
-    # return np.random.randint(low,high,(n,k))
+    return np.random.randint(low, high, size=(n, k))
 
 
 # --- Matrix manipulation ---
 
 def reverse_rows(A):
     """Return a matrix with rows reversed."""
-    B = np.copy(A)
-    v = A.shape
-    n = v[0]
-    k = v[1]
-    for i in range(n):
-        for j in range(k):
-            B[i, j] = A[n - i - 1, j]
-    return B
-
+    return A[::-1]
 
 def modify_diags(A):
     """Swap main and the anti-diagonal."""
-    B = np.copy(A)
-    v = A.shape
-    n = v[0]
-    k = v[1]
-    m = min(n,k)
-    for i in range(m):
-        A[i,k-i-1] = B[i,i]
-        A[i,i] = B[i,k-i-1]
-    return A
+    B = A.copy()
+    n = A.shape[0]
+    
+    for i in range(n):
+        # swap element on main diagonal (i,i) with anti-diagonal (i, n-1-i)
+        B[i, i], B[i, n - 1 - i] = B[i, n - 1 - i], B[i, i]
+    
+    return B
 
 # --- Linear algebra ---
 
 def project(x, y):
     """Return the projection of a (vector) x onto the direction of y."""
-    # yy = 0
-    # xy = 0
-    # s = 0
-    # if x.shape == y.shape:
-    #     n = x.shape[0]
-    #     for i in range(n):
-    #         yy = yy + y[i]*y[i]
-    #         xy = xy + x[i]*y[i]
-    #     s = xy / yy
-    #     for i in range(n):
-    #         x[i] = s*y[i]
-    # return x
+    
     return (x @ y) / (y @ y) * y
+
 
 def check_orthonormal(x, y):
     """Check if two vectors are orthonormal (orthogonal + unit length).
     Returns True if they are orthonormal, False otherwise."""
-    # d = 0
-    # u = 0
-    # v = 0
-    # if x.shape == y.shape:
-    #    n = x.shape[0]
-    #    for i in range(n):
-    #        d = d + x[i]*y[i]
-    #        u = u + x[i]*x[i]
-    #        v = v + y[i]*y[i]
-    #   if d == 0 and np.sqrt(u) == 1 and np.sqrt(v) == 1:
-    #        return True
-    #    else: return False
-    if np.allclose(x @ y, 0) and np.allclose(np.linalg.norm(x), 1) and np.allclose(np.linalg.norm(y)):
+    
+    if(np.allclose(np.linalg.norm(x), 1) and np.allclose(np.linalg.norm(y), 1) and np.allclose(project(x, y), 0)):
         return True
-
+    else:
+        return False
 
 def linear_map(A, x):
     """Apply a linear map defined by matrix A to vector x."""
@@ -103,8 +67,7 @@ def linear_map(A, x):
 
 def inverse_map(A, y):
     """Apply the inverse of a linear map defined by matrix A to vector y."""
-    B = np.linalg.inv(A)
-    return B @ y
+    return np.linalg.solve(A, y)
 
 
 def solve_via_eigenbasis(n=4):
@@ -120,40 +83,43 @@ def solve_via_eigenbasis(n=4):
     print("\n--- Solve in Eigenbasis ---")
 
     # Step 1: Generate a radnom linear system
-    # Generate a random M that is invertible, i.e. det(M) != 0),
+    # Generate a random M that is invertible, i.e. det(M) != 0), 
     # and a random vector vector b.
-    low = 0
-    high = 30
-    # m = gen_rand_int(n, n, low, high)
-    m = np.random.randn(low, high, (n, n))
-    while np.linalg.det(m) == 0:
-        m = gen_rand_int(n, n, low, high)
-    # b = gen_rand_int(n, 1, low, high)
-    b = np.random.randn(low, high, (n, 1))
+    while True:
+        M = np.random.uniform(1, 10, size=(n, n))
+        if np.linalg.det(M) != 0:
+            break
+    b = np.random.uniform(1, 10, size=(n, ))
 
     # Step 2: Perform eigen-decomposition of M
     # Make use of numpy's eigenvalue decomposition function np.linalg.eig,
     # and the numpy function np.diag.
-    d = np.diag(np.linalg.eig(m)[0])
+    eigvals, eigvecs = np.linalg.eig(M)
+    P = eigvecs
+    D = np.diag(eigvals)
 
     # Step 3: Express b in the eigenbasis
-    p = np.linalg.eig(m)[1]
-    bprime = inverse_map(p, b)
+    b_mapped = np.linalg.inv(P) @ b
 
     # Step 4: Solve in eigenbasis (diagonal system)
-    y = bprime / d
+    y = b_mapped / eigvals  # elementwise division since D y = b'
 
     # Step 5: Map back to original space
-    x = linear_map(p, y)
+    x = P @ y
 
     # Step 6: Verification
-    bb = linear_map(m, x)
+    residual = M @ x - b
+    check = np.allclose(residual, 0)
 
     # If result is correct return all relevant variables: M, x, b
-    if np.allclose(b, bb):
-        return m, x, b
+    if check:
+        print("Original M:\n", M)
+        print("Diagonal M' (eigenbasis):\n", D)
+        return M, b, x
     else:
+        print("Solution verification failed!")
         return None, None, None
+
 
 
 # --- Plotting ---
@@ -164,12 +130,10 @@ def plot_matrix(A, title="Matrix", cmap="viridis"):
     plt.title(title)
     plt.show()
 
-
 def plot_checkerboard(A):
     plt.imshow(A, cmap="gray", interpolation='nearest')
     plt.title("Checkerboard / Chessboard")
     plt.show()
-
 
 # --- Main testing ---
 
@@ -181,7 +145,6 @@ if __name__ == "__main__":
     print(cb)
     plot_checkerboard(cb)
 
-    plot_checkerboard(cb)
     input("Press Enter to continue...")
 
     # 2. Lower-triangular
@@ -222,7 +185,7 @@ if __name__ == "__main__":
     proj_v_onto_z = project(v, z)
 
     v_new = proj_v_onto_u * u + proj_v_onto_z * z
-
+    
     if check_orthonormal(u, z):
         if np.allclose(v, v_new):
             print("Projection successful!")
@@ -242,10 +205,10 @@ if __name__ == "__main__":
 
     # 8. Solve via transformed space
     print("\n8. Solve random system via transformed space:")
-
+    
     # Call the function and capture all results
     M, b, x = solve_via_eigenbasis(n=4)
-
+    
     print("\n--- Summary of Transformed Space Solution ---")
     print("Original system M:\n", M)
     print("Right-hand side b:", b)
