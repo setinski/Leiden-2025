@@ -107,8 +107,26 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
              that satisfy the radius constraint.
     :rtype: list[numpy.ndarray]
     """
+    liosta = []
+    j = ((x - t) @ b1) / (b1 @ b1)
+    floor = -math.floor(j)
+    h = 0
+    l = 0
+    while ((j + floor + h) * (b1)) @ ((j + floor + h) * (b1)) <= r ** 2:
+        liosta.append((floor + h) * b1)
+        h = h + 1
+    while ((j + floor - l - 1) * b1) @ ((j + floor - l - 1) * b1) <= r ** 2:
+        liosta.append((floor - l - 1) * b1)
+        l = l + 1
+    return liosta
 
-    pass
+"""
+b1 = np.array([1, 2])
+t = np.array([10, 10])
+x = np.zeros((t.shape))
+r = 5
+print(fincke_pohst_1d_enumeration(b1, x, t, r))
+"""
 
 ############
 # Exercise 4
