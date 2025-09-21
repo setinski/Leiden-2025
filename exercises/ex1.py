@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 # --- Matrix / vector generators ---
 
 def gen_checkerboard(n, k):
@@ -54,12 +53,11 @@ def modify_diags(A):
     v = A.shape
     n = v[0]
     k = v[1]
-    m = min(n, k)
+    m = min(n,k)
     for i in range(m):
-        B[i, k - i - 1] = A[i, i]
-        B[i, i] = A[i, k - i - 1]
-    return B
-
+        A[i,k-i-1] = B[i,i]
+        A[i,i] = B[i,k-i-1]
+    return A
 
 # --- Linear algebra ---
 
@@ -69,16 +67,15 @@ def project(x, y):
     # xy = 0
     # s = 0
     # if x.shape == y.shape:
-    #    n = x.shape[0]
-    #    for i in range(n):
-    #        yy = yy + y[i]*y[i]
-    #        xy = xy + x[i]*y[i]
-    #    s = xy / yy
-    #    for i in range(n):
-    #        x[i] = s*y[i]
+    #     n = x.shape[0]
+    #     for i in range(n):
+    #         yy = yy + y[i]*y[i]
+    #         xy = xy + x[i]*y[i]
+    #     s = xy / yy
+    #     for i in range(n):
+    #         x[i] = s*y[i]
     # return x
     return (x @ y) / (y @ y) * y
-
 
 def check_orthonormal(x, y):
     """Check if two vectors are orthonormal (orthogonal + unit length).
@@ -182,6 +179,8 @@ if __name__ == "__main__":
     print("\n1. Checkerboard:")
     cb = gen_checkerboard(8, 8)
     print(cb)
+    plot_checkerboard(cb)
+
     plot_checkerboard(cb)
     input("Press Enter to continue...")
 

@@ -30,7 +30,11 @@ def in_lattice(B, v):
     :notes: Make use of numpy.linalg function solve and numpy functions round and allclose.
     """
 
-	pass
+	x = v @ np.linalg.inv(B)
+	# Alternative option:
+    # x = np.linalg.solve(B.transpose(), v)
+	xr = np.round(x)
+	return np.allclose(x, xr)
 
 ############
 # Exercise 1
@@ -52,7 +56,11 @@ def simple_rounding(B, t):
     :notes: Make use of numpy.linalg function solve and numpy function round.
     """
     
-    pass
+    x = t @ np.linalg.inv(B)
+	# Alternative option:
+    # x = np.linalg.solve(B.transpose(), t)
+    xr = np.round(x)
+    return xr @ B
 
 
 ############
@@ -75,7 +83,10 @@ def orth_proj(x, y):
     :rtype: numpy.ndarray
     """
 	
-    pass
+    if np.allclose(y, 0):
+        return 0
+	
+    return (x @ y) / (y @ y) * y
 
 def Gram_Schmidt_orth(B):
 	"""
@@ -90,7 +101,15 @@ def Gram_Schmidt_orth(B):
     :rtype: numpy.ndarray   
     """
 
-	pass
+	n,_ = B.shape
+	Bs = np.zeros(B.shape, dtype=float)
+
+	for i in range(n):
+		Bs[i] = B[i]
+		for j in range(i):
+			Bs[i] -= orth_proj(B[i], Bs[j])
+
+	return Bs
 
 
 ############
@@ -120,7 +139,17 @@ def nearest_plane(B, Bs, t):
     (!) Use built-in copy function to create a copy of t.
     """
 
-	pass
+	n,d = B.shape
+
+	e = np.copy(t)
+	v = zeros(d, dtype=int)
+
+	for i in reversed(range(n)):
+		k = int(np.round((e @ Bs[i]) / (Bs[i]@Bs[i])))
+		e -= k * B[i]
+		v += k * B[i]
+
+	return v
 
 ############
 # Exercise 4
@@ -148,7 +177,13 @@ def compare_norm_distrib(B, num_samples):
     - Visualization is handled by `plot_two_hist` provided below.
     """
 
-	pass
+	n, _ = B.shape
+	Bs = Gram_Schmidt_orth(B)
+
+	data_B = [np.linalg.norm((np.random.rand(n) - .5) @ B) for x in range(num_samples)]
+	data_Bs = [np.linalg.norm((np.random.rand(n) - .5) @ Bs) for x in range(num_samples)]
+	
+	plot_two_hist(data_B, data_Bs, n)
 	
 
 ############
