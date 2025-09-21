@@ -214,7 +214,7 @@ def plot_two_hist(data_SR, data_NP, n, save=False):
     plt.close()
 
 def compare_norm_distrib(B, num_samples):
-	"""
+    """
     Compare the distribution of vector norms in the fundamental parallelepiped
     of a lattice basis `B` versus its Gram–Schmidt orthogonalization `Bs`.
     B : numpy.ndarray of shape (n, n)
@@ -229,7 +229,6 @@ def compare_norm_distrib(B, num_samples):
     - Uses `numpy.linalg.norm` to compute Euclidean lengths.
     - Visualization is handled by `plot_two_hist` provided below.
     """
-
     vB  =np.ones(num_samples)
     vBs = np.ones(num_samples)
     n = B.shape[0]
