@@ -39,8 +39,8 @@ def in_lattice(B, v):
 ############
 
 def simple_rounding(B, t):
-    x=np.linalg.solve(B, t)
-    return B@np.round(x)
+    x=np.linalg.solve(B.transpose(), t)
+    return np.round(x)@B
     """
     Return a lattice vector close to the target vector `t`, using the Simple Rounding algorithm.
 
@@ -63,7 +63,9 @@ def simple_rounding(B, t):
 ############
 
 def orth_proj(x, y):
-    return x-(y*(x@y)/(y@y))
+    if np.allclose(y,0):
+        return 0
+    return y*(x@y)/(y@y)
     """
     Return the projection of vector `x` orthogonally to vector `y`, using the formula:
     (<x, y> / <y, y>) * y, where <·,·> denotes the inner product.
@@ -76,18 +78,15 @@ def orth_proj(x, y):
     :return: The projection of `x` orthogonally to `y`.
     :rtype: numpy.ndarray
     """
-	
-    pass
 
 def Gram_Schmidt_orth(B):
     n=B.shape[0]
-    u=np.zeros((n,n), dtype=float)
-    for i in range(0,n):
-        sum=np.zeros(n)
-        for j in range(0,i):
-            sum=sum+orth_proj(B[i,:], u[j,:])
-        u[i,:]=B[i,:]-sum
-    return u
+    Bs=np.zeros((n,n), dtype=float)
+    for i in range(n):
+        Bs[i]=B[i]
+        for j in range(i):
+            Bs[i]-=orth_proj(B[i],Bs[j])
+    return Bs
     """
     Perform Gram-Schmidt orthogonalization on the rows of a matrix `B`.
 
@@ -107,13 +106,13 @@ def Gram_Schmidt_orth(B):
 ############
 
 def nearest_plane(B, Bs, t):
-    n,d=B.shape()
+    n,d=B.shape
     v=zeros(d, dtype=int)
     e=np.copy(t)
     for i in range(n - 1, -1, -1):
-        k=np.round((e@Bs[i,:])/(Bs[i,:]@Bs[i,:]))
-        v=v+k*Bs[i,:]
-        e=e-k*Bs[i,:]
+        k=int(np.round((e@Bs[i])/(Bs[i]@Bs[i])))
+        v+=k*B[i,:]
+        e-=k*B[i,:]
     return v
     """
     Apply Babai's Nearest Plane Algorithm to approximate a target vector `t`
@@ -148,9 +147,8 @@ def nearest_plane(B, Bs, t):
 def compare_norm_distrib(B, num_samples):
     n = B.shape[0]
     Bs = Gram_Schmidt_orth(B)
-    coef = np.random.rand(num_samples, n) - 0.5
-    pts_B = coef@ B
-    pts_Bs = coef@ Bs
+    pts_B = (np.random.rand(num_samples, n) - 0.5)@ B
+    pts_Bs = (np.random.rand(num_samples, n) - 0.5)@ Bs
 
     norms_B = np.linalg.norm(pts_B, axis=1) #axis=1 gives norm of row 
     norms_Bs = np.linalg.norm(pts_Bs, axis=1)
@@ -173,7 +171,6 @@ def compare_norm_distrib(B, num_samples):
     - Visualization is handled by `plot_two_hist` provided below.
     """
 	
-
 ############
 # Helper functions
 ############
