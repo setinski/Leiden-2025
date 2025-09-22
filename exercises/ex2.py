@@ -33,7 +33,6 @@ def in_lattice(B, v):
     """
 
 
-
 ############
 # Exercise 1
 # Implement the Simple Rounding Algorithm 
@@ -78,11 +77,7 @@ def orth_proj(x, y):
     :rtype: numpy.ndarray
     """
 	
-    if np.allclose(y, 0):
-        return 0
-	
     pass
-
 
 def Gram_Schmidt_orth(B):
     n=B.shape[0]
@@ -139,6 +134,7 @@ def nearest_plane(B, Bs, t):
     :rtype: numpy.ndarray
 
     :notes: Make use of numpy round() function and the built-in int() conversion.
+    (!) Use built-in copy function to create a copy of t.
     """
 
 	pass
@@ -176,7 +172,7 @@ def compare_norm_distrib(B, num_samples):
 # Helper functions
 ############
 
-def plot_two_hist(data_SR, data_NP, n, save=True):
+def plot_two_hist(data_SR, data_NP, n, save=False):
     """Take is input two lists and plot two histograms"""
 	
     _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
@@ -194,7 +190,7 @@ def plot_two_hist(data_SR, data_NP, n, save=True):
     plt.close()
 	
 
-def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=True):
+def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=False):
     """Draw lattice tiling, points, basis, and optional extras."""
     plt.figure(figsize=(6, 6))
 
@@ -281,8 +277,8 @@ if __name__ == "__main__":
     input("Press Enter to continue...")
 
     ##### 3. Nearest-plane (norm distribution) #####
-    designed_bases = [B2, B4, B24]
-    for B in designed_bases:
+    other_basis = [B2, B4, B24]
+    for B in other_basis:
         print("\n=== Nearest-Plane (Norm Distribution) ===")
         print("Running compare_norm_distrib for basis with shape:", B.shape)
         compare_norm_distrib(B, 50000)

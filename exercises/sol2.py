@@ -59,7 +59,7 @@ def simple_rounding(B, t):
     x = t @ np.linalg.inv(B)
 	# Alternative option:
     # x = np.linalg.solve(B.transpose(), t)
-    #xr = np.round(x)
+    xr = np.round(x)
     return xr @ B
 
 
@@ -136,11 +136,12 @@ def nearest_plane(B, Bs, t):
     :rtype: numpy.ndarray
 
     :notes: Make use of numpy round() function and the built-in int() conversion.
+    (!) Use built-in copy function to create a copy of t.
     """
 
 	n,d = B.shape
 
-	e = t
+	e = np.copy(t)
 	v = zeros(d, dtype=int)
 
 	for i in reversed(range(n)):
