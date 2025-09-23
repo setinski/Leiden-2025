@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
-from sol2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
+from ex2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
 
 # The exercises comprises of function to be implemented: replace the keyword "pass"

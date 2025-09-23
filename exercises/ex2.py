@@ -158,8 +158,8 @@ def compare_norm_distrib(B, num_samples):
 def plot_two_hist(data_SR, data_NP, n, save=False):
     """Take is input two lists and plot two histograms"""
 	
-    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
-    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
+    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Original basis distribution")
+    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Gram–Schmidt basis distribution")
 	
     plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
     plt.legend()
