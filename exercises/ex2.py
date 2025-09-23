@@ -170,7 +170,7 @@ def nearest_plane(B, Bs, t):
     #BT = np.transpose(B)
     #BsT = np.transpose(Bs)
     n = B.shape[0]
-    v = np.zeros((1,n))
+    v = np.zeros(n)
     e = np.copy(t)
     for j in range(n):
         i = n-j-1
@@ -181,7 +181,8 @@ def nearest_plane(B, Bs, t):
         k = int(k)
         v = v + k*B[i]
         e = e - k*B[i]
-    return v.reshape((n,))
+    return v
+    #return v.reshape((n,))
 
 ############
 # Exercise 4
@@ -195,23 +196,6 @@ def nearest_plane(B, Bs, t):
 ############
 # Helper functions
 ############
-
-def plot_two_hist(data_SR, data_NP, n, save=False):
-    """Take is input two lists and plot two histograms"""
-
-    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
-    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
-
-    plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d" % n)
-    plt.legend()
-
-    if save:
-        plt.savefig("ParallelepipedDistDim%d.png" % n)
-    else:
-        plt.show()
-
-    plt.clf()
-    plt.close()
 
 def compare_norm_distrib(B, num_samples):
     """
@@ -233,18 +217,17 @@ def compare_norm_distrib(B, num_samples):
     vBs = np.ones(num_samples)
     n = B.shape[0]
     Bs = Gram_Schmidt_orth(B)
-    k = np.random.randint(low=0, high=n-1, size=num_samples) #maybe problem that now
+    #k = np.random.randint(low=-0.5, high=0.5, size=num_samples) #maybe problem that now
     #multiple entries of k may contain same value
     for i in range(num_samples):
-        vB[i] = np.linalg.norm(B[k[i], :])
-        vBs[i] = np.linalg.norm(Bs[k[i], :])
-    m = np.max(vBs)+10
-    if np.max(vB) > np.max(vBs):
-        m = np.max(vB)+10
-    _, bins, _ = plt.hist(vB, bins=100, density=True, label="basis")
-    _ = plt.hist(vBs, bins=bins, alpha=0.5, density=True, label="basis GSO")
-    plt.legend()
-    plt.show()
+        k = np.random.rand(n)-0.5
+        vB[i] = np.linalg.norm(np.transpose(B)@k)
+        vBs[i] = np.linalg.norm(np.transpose(Bs)@k)
+    plot_two_hist(vB,vBs,n)
+    #_, bins, _ = plt.hist(vB, bins=100, density=True, label="basis")
+    #_ = plt.hist(vBs, bins=bins, alpha=0.5, density=True, label="basis GSO")
+    #plt.legend()
+    #plt.show()
 
 ############
 # Helper functions
@@ -253,8 +236,8 @@ def compare_norm_distrib(B, num_samples):
 def plot_two_hist(data_SR, data_NP, n, save=False):
     """Take is input two lists and plot two histograms"""
 
-    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
-    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
+    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Basis")
+    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="GS basis")
 
     plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
     plt.legend()

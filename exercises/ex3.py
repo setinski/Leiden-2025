@@ -32,24 +32,21 @@ def enumeration(x, r):
     :notes: Make use of itertools product function
     and the built-in append function.
     """
-    s = math.floor(r)
-    m = np.zeros((x.shape[0],2*s+1), dtype=int)
-    v = np.zeros(x.shape, dtype=int)
-    y = np.zeros((1, 2*s+1), dtype=int)
+    lijst = []
     list = []
     for i in range(x.shape[0]):
-        for j in range(2*s+1):
-            m[i,j] = x[i]-s+j
-    for i in range(2*s+1):
-        y[0,i] = i
-    for w in product(y[0], repeat=x.shape[0]):
-        for i in range(x.shape[0]):
-            v[i] = m[i,w[i]]
-        t = v.copy()
-        list.append(t)
+        c = math.ceil(x[i]-r)
+        j = 0
+        a = np.zeros(math.floor(x[i]+r)-math.ceil(x[i]-r)+1,dtype=int)
+        while c <= math.floor(x[i]+r):
+            a[j] = c
+            c += 1
+            j += 1
+            b = a.copy()
+        lijst.append(b)
+    for w in product(*lijst):
+        list.append(w)
     return list
-
-
 
 ############
 # Exercise 2
@@ -76,10 +73,10 @@ def simple_enumeration(B, t, l):
     # Initialize the best lattice vector found so far
     c = np.ndarray(t.shape, dtype=int)
     c.fill(np.iinfo(int).max)
-
+    # What I added:
     BT = np.transpose(B)
-    c = np.zeros(t.shape)
     tprime = np.linalg.inv(np.transpose(B)) @ t
+    print(tprime)
     for vprime in enumeration(tprime, l/2):
         v = BT @ vprime
         if (v-t)@(v-t) < (c-t)@(c-t):
@@ -115,13 +112,13 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     h = 0
     l = 0
     while ((j + floor + h) * (b1)) @ ((j + floor + h) * (b1)) <= r ** 2:
-        liosta.append((floor + h) * b1)
+        liosta.append(x+(floor + h) * b1)
         h = h + 1
     while ((j + floor - l - 1) * b1) @ ((j + floor - l - 1) * b1) <= r ** 2:
-        liosta.append((floor - l - 1) * b1)
+        liosta.append(x+(floor - l - 1) * b1)
+        print("HI",x+(floor - l - 1) * b1)
         l = l + 1
     return liosta
-
 
 ############
 # Exercise 4
@@ -147,8 +144,13 @@ def fincke_pohst_enumeration(B, t, r):
     for matrix pseudo inversion.
     """
     if B.shape[0] == 1:
+        firstvector = B[0].reshape((1,B.shape[1]))
+        print(firstvector)
+        print(t.shape)
         x = np.zeros(t.shape)
-        return fincke_pohst_1d_enumeration(B[0], x, t, r)
+        print("bzero",B[0])
+        print(B[0].shape)
+        return fincke_pohst_1d_enumeration(firstvector, x, t, r)
     S = []
     Bprime = np.zeros((B.shape[0] - 1, B.shape[1]))
     for i in range(B.shape[0] - 1):
@@ -156,28 +158,34 @@ def fincke_pohst_enumeration(B, t, r):
     Sprime = fincke_pohst_enumeration(Bprime, t - orth_proj(t, B[0]), r)
     for elt in Sprime:
         print("elt=", elt)
-        rho = r ** 2 - elt @ elt  # originally we would have to take the square root
+        rho = math.sqrt(r ** 2 - (elt-(t - orth_proj(t, B[0]))) @ (elt-(t - orth_proj(t, B[0]))))
         print("rho=", rho)
         print("pseudoinv=", np.linalg.pinv(Bprime))
-        y = np.linalg.pinv(Bprime) @ np.transpose(elt)
+        eltprime = np.array(elt)
+        print("shape=",elt.shape)
+        print(eltprime)
+        print("reshape=",eltprime.reshape((B.shape[0],)))
+        print("shapemat=",Bprime.shape)
+        print("column",np.zeros((4,1)))
+        y = np.linalg.pinv(Bprime) @ elt.reshape((B.shape[0],1))
         print("y=", y)
         z = np.array([0])
         yprime = np.concatenate((z, y), axis=None)
-        print(yprime)
-        x = B @ yprime
-        print(x)
-        h = 0
-        l = 0
-        j = ((x - t) @ B[0]) / (B[0] @ B[0])
-        while ((j + h) * (B[0])) @ ((j + h) * (B[0])) <= rho ** 2:
-            S.append(x + h * B[0])
-            h = h + 1
-        while ((j - l - 1) * B[0]) @ ((j - l - 1) * B[0]) <= rho ** 2:
-            S.append(x + (-l - 1) * B[0])
-            l = l + 1
+        print("yprime=",yprime)
+        print(B)
+        x = B @ np.transpose(yprime)
+        print("x=",x)
+        H = fincke_pohst_1d_enumeration(B[0],x,t,rho)
+        for elt in H:
+            S.append(elt)
     return S
 
-    
+"""
+B = np.eye(2)
+t = np.array([1,1])
+r = 1
+print("Result:", fincke_pohst_enumeration(B,t,r))
+"""
 
 ############
 # Helper functions
