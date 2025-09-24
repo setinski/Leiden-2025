@@ -143,14 +143,18 @@ def fincke_pohst_enumeration(B, t, r):
     :notes: Make use of np.linalg.lstsq (i.e. the least-square method) or np.linalg.pinv
     for matrix pseudo inversion.
     """
+    BT = np.transpose(B)
+    if B.shape[0] == 0:
+        return "hoi"
     if B.shape[0] == 1:
+        print(B.shape)
         firstvector = B[0].reshape((1,B.shape[1]))
         print(firstvector)
         print(t.shape)
         x = np.zeros(t.shape)
         print("bzero",B[0])
         print(B[0].shape)
-        return fincke_pohst_1d_enumeration(firstvector, x, t, r)
+        return fincke_pohst_1d_enumeration(B[0], x, t, r)
     S = []
     Bprime = np.zeros((B.shape[0] - 1, B.shape[1]))
     for i in range(B.shape[0] - 1):
@@ -164,28 +168,33 @@ def fincke_pohst_enumeration(B, t, r):
         eltprime = np.array(elt)
         print("shape=",elt.shape)
         print(eltprime)
-        print("reshape=",eltprime.reshape((B.shape[0],)))
         print("shapemat=",Bprime.shape)
         print("column",np.zeros((4,1)))
-        y = np.linalg.pinv(Bprime) @ elt.reshape((B.shape[0],1))
+        help = np.transpose(Bprime)
+        y1 = (np.linalg.pinv(help))
+        print("shape of y1",y1.shape)
+        y2 = elt.reshape((B.shape[1],1))
+        print("SHAPE OF Y2",y2.shape)
+        y = y1 @ y2
         print("y=", y)
         z = np.array([0])
         yprime = np.concatenate((z, y), axis=None)
         print("yprime=",yprime)
+        print("shape of yprime=",yprime.shape)
         print(B)
-        x = B @ np.transpose(yprime)
+        x = BT @ np.transpose(yprime)
         print("x=",x)
         H = fincke_pohst_1d_enumeration(B[0],x,t,rho)
         for elt in H:
             S.append(elt)
     return S
 
-"""
+
 B = np.eye(2)
 t = np.array([1,1])
 r = 1
 print("Result:", fincke_pohst_enumeration(B,t,r))
-"""
+
 
 ############
 # Helper functions
