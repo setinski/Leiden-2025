@@ -14,7 +14,7 @@ from sys import exit
 ############
 
 def lagrange_reduce(B):
-    """
+	"""
     Apply Lagrange reduction to a 2D lattice basis `B` in place.
 
     :param B: A NumPy array of shape (2, n) representing the lattice basis.
@@ -28,12 +28,15 @@ def lagrange_reduce(B):
 
     :raises ValueError: If the input array does not have exactly two row vectors.
 
-    :notes: Make use of in-place swapping of rows, and int() conversion.
+    :notes: Make use of in-place swapping of rows using built-in function copy.
     """
-    if B.shape[0] != 2:
-        raise ValueError("Input basis B must have exactly two vectors (2 rows).")
 
-    pass
+	if B.shape[0] != 2:
+		raise ValueError("Input basis B must have exactly two vectors (2 rows).")
+
+	U = np.identity(2, dtype=np.int64)
+	
+	pass
 
 
 ############
