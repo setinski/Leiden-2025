@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
-from sol2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
+from ex2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
+from itertools import product
+import math
 
 # The exercises comprises of function to be implemented: replace the keyword "pass"
 # with your implementation.
@@ -14,7 +16,7 @@ from generic_functions import generate_lattice_points, in_lattice
 ############
 
 def enumeration(x, r):
-    """
+	"""
     Return all integer vectors in Z^n whose coordinates differ from `x`
     by at most `r` (per coordinate).
 
@@ -28,18 +30,25 @@ def enumeration(x, r):
     :rtype: list of numpy.ndarray
 
     :notes: Make use of numpy concatenate() function and the built-in append function.
+	also use np.
     """
-
-    pass
-
-
+	n = x.shape[1]
+	L = []
+	for i in range(n):
+		low = math.ceil(x[i]-r)
+		high = math.floor(x[i]+r)
+		L.append(range(low,high+1))
+	results = []
+	for i in product(*L):
+		results.append(i)
+	return results
 ############
 # Exercise 2
 # Implement the Simple Enumeration Algorithm 
 ############
 
 def simple_enumeration(B, t, l):
-    """
+	"""
 	Return a lattice vector close to the target vector `t`, using the Simple Enumeration algorithm.
 
 	:param B: A square (n x n) NumPy array representing a lattice basis.
@@ -54,7 +63,7 @@ def simple_enumeration(B, t, l):
 
 	:notes: Make use of numpy.linalg function solve and numpy function round.
 	"""
-
+	
     pass
 
 
