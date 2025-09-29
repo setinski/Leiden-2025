@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
-from ex2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
+from sol2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
 
 # The exercises comprises of function to be implemented: replace the keyword "pass"
@@ -14,6 +14,17 @@ from generic_functions import generate_lattice_points, in_lattice
 ############
 
 def enumeration(x, r):
+    n=len(x)
+    ranges = []
+    for i in range(n):
+        high = int(np.floor(x[i] - r))  
+        low = int(np.ceil(x[i] + r)) 
+        coord_range = range(low, high)  # range is exclusief de bovenkant, dus +1
+        ranges.append(coord_range)
+
+    for point in itertools.product(area):
+        result=result.append(np.array(point))
+    return result
     """
     Return all integer vectors in Z^n whose coordinates differ from `x`
     by at most `r` (per coordinate).
@@ -31,15 +42,24 @@ def enumeration(x, r):
     and the built-in append function.
     """
 
-    pass
-
-
 ############
 # Exercise 2
 # Implement the Simple Enumeration Algorithm 
 ############
 
 def simple_enumeration(B, t, l):
+
+    t_new=np.inv(B)@t
+    for v_temp in enumeration(t_new, l/2):
+        v=B@v_temp
+        if np.linalg.norm(v,t)< np.linalg.norm(c,t):
+            c=v
+
+    # Initialize the best lattice vector found so far
+    c = np.ndarray(t.shape, dtype=int)
+    c.fill(np.iinfo(int).max)
+
+    return c
     """
 	Return a lattice vector close to the target vector `t`, using the Simple Enumeration algorithm.
 
@@ -57,19 +77,21 @@ def simple_enumeration(B, t, l):
     numpy.linalg functions solve and norm and numpy function round.
 	"""
 
-    # Initialize the best lattice vector found so far
-    c = np.ndarray(t.shape, dtype=int)
-    c.fill(np.iinfo(int).max)
-
-    pass
-
-
 ############
 # Exercise 3
 # Implement the Fincke-Pohst Enumeration Subroutine
 ############
 
 def fincke_pohst_1d_enumeration(b1, x, t, r):
+    n=len(b1)
+    if n==1:
+        return np.array()
+    else:
+        S=np.array(n,n)
+        B=np.zeros(n,n)
+        B[i]=b1
+        return 
+
     """
     Enumerate all lattice points along the line spanned by the basis vector `b1`
     that lie within a Euclidean distance `r` from the target vector `t`.
@@ -87,8 +109,6 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
              that satisfy the radius constraint.
     :rtype: list[numpy.ndarray]
     """
-
-    pass
 
 
 ############
