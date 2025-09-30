@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
+import itertools
 from sol2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
 
@@ -17,13 +18,12 @@ def enumeration(x, r):
     n=len(x)
     ranges = []
     for i in range(n):
-        high = int(np.floor(x[i] - r))  
-        low = int(np.ceil(x[i] + r)) 
-        coord_range = range(low, high)  # range is exclusief de bovenkant, dus +1
-        ranges.append(coord_range)
-
-    for point in itertools.product(area):
-        result=result.append(np.array(point))
+        high = int(np.floor(x[i] + r)+1)  
+        low = int(np.ceil(x[i] - r)) 
+        ranges.append(range(low, high))
+    result=[]
+    for point in itertools.product(*ranges):
+        result.append(np.array(point))
     return result
     """
     Return all integer vectors in Z^n whose coordinates differ from `x`
@@ -48,17 +48,19 @@ def enumeration(x, r):
 ############
 
 def simple_enumeration(B, t, l):
-
-    t_new=np.inv(B)@t
-    for v_temp in enumeration(t_new, l/2):
-        v=B@v_temp
-        if np.linalg.norm(v,t)< np.linalg.norm(c,t):
-            c=v
-
     # Initialize the best lattice vector found so far
     c = np.ndarray(t.shape, dtype=int)
     c.fill(np.iinfo(int).max)
 
+    t_new=t @ np.linalg.inv(B)
+    enum=enumeration(t_new, l/2)
+
+    assert enum, "Enumeration returned None, expected a list of vectors."
+    
+    for v_temp in enum:
+        v=v_temp@B
+        if np.linalg.norm(v-t)< np.linalg.norm(c-t):
+            c=v
     return c
     """
 	Return a lattice vector close to the target vector `t`, using the Simple Enumeration algorithm.
@@ -83,14 +85,23 @@ def simple_enumeration(B, t, l):
 ############
 
 def fincke_pohst_1d_enumeration(b1, x, t, r):
-    n=len(b1)
-    if n==1:
-        return np.array()
-    else:
-        S=np.array(n,n)
-        B=np.zeros(n,n)
-        B[i]=b1
-        return 
+
+    for i in range(len(b1)):
+        while np.linalg.norm((((-t)@b1)/(b1@b1)+z)@b1)<=r:
+
+
+
+        high = int(np.floor(b1[i] + r)+1)  
+        low = int(np.ceil(b1[i] - r)) 
+        ranges.append(range(low, high))
+    result=[]
+    for point in itertools.product(*ranges):
+        result.append(np.array(point))
+    return result
+
+
+
+    return 
 
     """
     Enumerate all lattice points along the line spanned by the basis vector `b1`
