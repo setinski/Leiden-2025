@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from sol1 import Gram_Schmidt_orth, nearest_plane
+from ex2 import Gram_Schmidt_orth, nearest_plane
 from math import sqrt, log
 from sys import exit
 
@@ -28,18 +28,32 @@ def lagrange_reduce(B):
 
     :raises ValueError: If the input array does not have exactly two row vectors.
 
-    :notes: Make use of in-place swapping of rows, and int() conversion.
+    :notes: Make use of in-place swapping of rows using built-in function copy.
     """
+    # Was already there
     if B.shape[0] != 2:
         raise ValueError("Input basis B must have exactly two vectors (2 rows).")
+    U = np.identity(2, dtype=np.int64)
 
-    pass
-
+    # What I added
+    while np.linalg.norm(B[0]) > np.linalg.norm(B[1]):
+        A = np.copy(B)
+        C = np.copy(U)
+        A[0] = B[1]
+        A[1] = B[0]
+        C[0] = U[1]
+        C[1] = U[0]
+        k = int(round((A[0] @ A[1])/(A[0] @ A[0])))
+        A[1] = A[1] - k * A[0]
+        C[1] = C[1] - k * C[0]
+        B = np.copy(A)
+        U = np.copy(C)
+    return U
 
 ############
 # Exercise 2
 # Implement a the Size-Reduction Algorithm (in place) on a basis input B. 
-# As a  by-product, provide as output the Gram-Schimdt orthogonalisation of B.
+# As a by-product, provide as output the Gram-Schimdt orthogonalisation of B.
 ############
 
 def size_reduce(B, Bs):
