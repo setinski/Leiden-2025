@@ -5,7 +5,7 @@ from math import sqrt
 import pytest
 import matplotlib
 
-from ex4 import lagrange_reduce, size_reduce, LLL, anim_LLL
+from ex4 import lagrange_reduce, size_reduce, LLL
 from ex2 import Gram_Schmidt_orth, in_lattice
 
 # np.random.seed(42)
