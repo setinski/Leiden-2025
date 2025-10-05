@@ -9,7 +9,7 @@ save_counter = 0
 # The exercises comprises of function to be implemented:
 # Replace the keyword "pass" with your implementation of the desired function
 
-############ 
+############
 # Exercise 0
 # Warm-up: Lattices
 ############
@@ -28,17 +28,25 @@ def in_lattice(B, v):
     :rtype: bool
 
     :notes: Make use of numpy.linalg function solve and numpy functions round and allclose.
+	1. Write v in base B as x: x = B^T * v .
+	2. Round to make it an integer vector. If v this indeed a lattice point,
+	this step should merely fix floating-point numerical errors.
+    3. Check equality up to some small tolerance.
     """
 
-	pass
+	#x = v@ np.linalg.inv(B)
+	x = np.linalg.solve(B.transpose(), v)
+	xr = np.round(x)
+
+	return np.allclose(x, xr)
 
 ############
 # Exercise 1
-# Implement the Simple Rounding Algorithm 
+# Implement the Simple Rounding Algorithm
 ############
 
 def simple_rounding(B, t):
-    """
+	"""
     Return a lattice vector close to the target vector `t`, using the Simple Rounding algorithm.
 
     :param B: A square (n x n) NumPy array representing a lattice basis.
@@ -51,8 +59,11 @@ def simple_rounding(B, t):
 
     :notes: Make use of numpy.linalg function solve and numpy function round.
     """
-    
-    pass
+	#x = v@ np.linalg.inv(B)
+	x = np.linalg.solve(B.transpose(), t)
+	xr = np.round(x)
+
+	return xr@B
 
 
 ############
@@ -62,7 +73,7 @@ def simple_rounding(B, t):
 ############
 
 def orth_proj(x, y):
-    """
+	"""
     Return the projection of vector `x` orthogonally to vector `y`, using the formula:
     (<x, y> / <y, y>) * y, where <·,·> denotes the inner product.
 
@@ -74,8 +85,14 @@ def orth_proj(x, y):
     :return: The projection of `x` orthogonally to `y`.
     :rtype: numpy.ndarray
     """
-	
-    pass
+	if np.allclose(y@y, 0):
+		exit()
+		return
+
+	x = (x@y)/(y@y) * y
+	return x
+
+
 
 def Gram_Schmidt_orth(B):
 	"""
@@ -87,10 +104,25 @@ def Gram_Schmidt_orth(B):
 
     :return: A NumPy array of the same shape as `B`, containing the orthogonalized basis vectors.
              The i-th row of the output is the orthogonal to the span of previous basis vectors.
-    :rtype: numpy.ndarray   
+    :rtype: numpy.ndarray
+
+    :notes: Verify the following properties:
+	1. The first Gram-Schmidt orthogonalization vector is the first basis vector.
+	2. Span of the first i rows of the Gram-Schmidt orthogonalized basis is the same as the span
+	of the first i rows of the lattice basis B.
+	3. All Gram-Schmidt orthogonalized vectors are pairwise orthogonal.
+	4. Each Gram-Schmidt orthogonalized vector is orthogonal to all the previous basis vectors.
     """
 
-	pass
+	n,d = B.shape
+	Bs = np.zeros((n,d), dtype=float)
+
+	for i in range(n):
+		Bs[i] =B[i]
+		for j in range(i):
+			Bs[i] -= orth_proj(B[i], Bs[j])
+
+	return Bs
 
 
 ############
@@ -117,10 +149,19 @@ def nearest_plane(B, Bs, t):
     :rtype: numpy.ndarray
 
     :notes: Make use of numpy round() function and the built-in int() conversion.
-    (!) Use built-in copy function to create a copy of t.
+	(!) Copy t, to avoid modying the value of the function caller.
     """
 
-	pass
+	#Bs = Gram_Schmidt_orth(B)
+	n,d = B.shape
+	v = zeros(d, dtype=int)
+	e = np.copy(t)
+	for i in range(n,-1):
+		k = int(np.round((e@Bs[i])/(Bs[i]@Bs[i])))
+		v  += k*B[i]
+		e -= k*B[i]
+
+	return v
 
 ############
 # Exercise 4
@@ -133,135 +174,65 @@ def nearest_plane(B, Bs, t):
 
 def compare_norm_distrib(B, num_samples):
 	"""
-    Compare the distribution of vector norms in the fundamental parallelepiped
-    of a lattice basis `B` versus its Gram–Schmidt orthogonalization `Bs`.
-    B : numpy.ndarray of shape (n, n)
-        Lattice basis matrix. Each row is treated as a basis vector.
-    num_samples : int
-        Number of random samples to draw from each distribution.
+    Compare the distribution of vector norms in the fundamental domains of a basis `B`
+    and its Gram-Schmidt orthogonalization `Bs`, by generating and plotting histograms.
 
-    Notes
-    -----
-    - Uses `numpy.random.rand` to generate random coefficients in [0, 1),
-      which are shifted to [-0.5, 0.5] to center the sampling domain.
-    - Uses `numpy.linalg.norm` to compute Euclidean lengths.
-    - Visualization is handled by `plot_two_hist` provided below.
+    :param B: A NumPy array of shape (n, n) representing a lattice basis.
+              Each row is treated as a basis vector.
+    :type B: numpy.ndarray
+    :param num_samples: The number of random samples to generate from each distribution.
+    :type num_samples: int
+
+    :notes: Make use of numpy.linalg function norm and numpy.random function rand, as well
+	as
     """
+	n = B.shape[0]
+	data_SR = np.zeros(num_samples, dtype=float)
+	data_NP = np.zeros(num_samples, dtype=float)
 
-	pass
-	
+	Bs = Gram_Schmidt_orth(B)
 
+	if n == 4:
+		print(Bs)
+	for k in range(num_samples):
+		b = np.random.rand(n)-.5
+		vSR = b @ B
+		vNP = b@Bs
+		data_SR[k] = np.linalg.norm(vSR)
+		data_NP[k] = np.linalg.norm(vNP)
+
+	plot_two_hist(data_SR, data_NP, n)
+
+	return
 ############
 # Helper functions
 ############
 
 def plot_two_hist(data_SR, data_NP, n, save=False):
-    """Take is input two lists and plot two histograms"""
-	
-    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Original basis distribution")
-    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Gram–Schmidt basis distribution")
-	
-    plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
-    plt.legend()
-	
-    if save:
-        plt.savefig("ParallelepipedDistDim%d.png"%n)
-    else:
-        plt.show()
-	
-    plt.clf()
-    plt.close()
-	
+	"""Take is input two lists and plot two histograms"""
 
-def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=False):
-    """Draw lattice tiling, points, basis, and optional extras."""
-    plt.figure(figsize=(6, 6))
+	_, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
+	_ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
 
-    # Draw background tiling
-    draw_fundamental_regions(B, xlim, ylim)
+	plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
+	plt.legend()
 
-    # Draw lattice points
-    pts = generate_lattice_points(B, xlim, ylim)
-    plt.scatter(pts[:, 0], pts[:, 1], s=20, c="black", zorder=2, label="Lattice points")
+	if save:
+		plt.savefig("ParallelepipedDistDim%d.png"%n)
+	else:
+		plt.show()
 
-    # Draw basis vectors (blue)
-    draw_basis_vectors(B)
-
-    # Optionally overlay Gram–Schmidt orthogonalized basis
-    if show_gs:
-        Bs = Gram_Schmidt_orth(B)
-        for i in range(2):
-            plt.arrow(0, 0, Bs[i, 0], Bs[i, 1],
-                      head_width=0.3, head_length=0.3,
-                      fc="red", ec="red", length_includes_head=True)
-
-    # Plot target vector if provided
-    if not show_gs:
-        plt.scatter(t[0], t[1], c="red", s=30, marker="o", zorder=3, label="Target vector")
-
-    # Plot rounding result if provided
-    if rounding_vec is not None:
-        plt.scatter(rounding_vec[0], rounding_vec[1], c="orange", s=80, marker="x", zorder=3, label="Simple rounding")
-
-    plt.xlim(xlim)
-    plt.ylim(ylim)
-    plt.gca().set_aspect("equal", adjustable="box")
-    plt.title(title)
-    plt.legend()
-
-    if save:
-        global save_counter
-        filename = f"Lattice_{B.shape[0]}_{save_counter}.png"
-        plt.savefig(filename)
-        save_counter += 1
-    else:
-        plt.show()
-
-    plt.clf()
-    plt.close()
+	plt.clf()
+	plt.close()
 
 
 ############
 # Main runner
 ############
 if __name__ == "__main__":
-    # Example bases
-    bases = [
-        np.array([[4, 0], [1, 4]], dtype=int),
-        np.array([[4, 4], [5, 8]], dtype=int)
-    ]
+    plot_bases = [B2, B4, B24]
 
-    # Example target vector
-    t = np.array([3.3, 8.4], dtype=float)
-
-    # Plot limits
-    xlim, ylim = (-13, 13), (-13, 13)
-
-    ##### 1. Simple rounding #####
-    for B in bases:
-        print("\n=== Simple Rounding ===")
-        print("Basis:\n", B)
-        rounding_vec = simple_rounding(B, t)
-        print("Rounding result:", rounding_vec)
-
-        plot_lattice_scene(B, xlim, ylim, t=t, rounding_vec=rounding_vec,
-                           title="2D lattice with Simple Rounding")
-
-    input("Press Enter to continue...")
-
-    ##### 2. Gram-Schmidt #####
-    for B in bases:
-        print("\n=== Gram-Schmidt ===")
-        print("Basis:\n", B)
-
-        plot_lattice_scene(B, xlim, ylim, t=t, show_gs=True,
-                           title="2D lattice with Gram-Schmidt basis")
-
-    input("Press Enter to continue...")
-
-    ##### 3. Nearest-plane (norm distribution) #####
-    other_basis = [B2, B4, B24]
-    for B in other_basis:
-        print("\n=== Nearest-Plane (Norm Distribution) ===")
+    for B in plot_bases:
+        print("\n========================================")
         print("Running compare_norm_distrib for basis with shape:", B.shape)
         compare_norm_distrib(B, 50000)

@@ -5,55 +5,80 @@ import matplotlib.pyplot as plt
 
 def gen_checkerboard(n, k):
     """Return an n x k checkerboard of 0s and 1s."""
-    pass
+    A = np.zeros((n,k), dtype=int)
+
+    for i in range(n):
+        for j in range(k):
+            A[i,j] = (i+j)%2
+
+    return A
 
 
 def gen_triangle_mat(n):
     """Return an n x n lower-triangular matrix of 1s."""
-    pass
+    A = np.zeros((n,n), dtype=int)
+    for i in range(n):
+        for j in range(i):
+            A[i,j] = 1
+
+    return A
 
 
 def gen_rand_int(n, k, low, high):
     """Return an n x k matrix of random integers in [low, high)."""
-    pass
+    A = np.random.randint(low=low, high=high, size=(n,k))
+
+    return A
 
 
 # --- Matrix manipulation ---
 
 def reverse_rows(A):
     """Return a matrix with rows reversed."""
-    pass
+    n,_ = A.shape
 
+    B = A.copy()
+    #return A[:,::-1]
+
+    B[:,::1] = A[:,::-1]
+    return B
 
 def modify_diags(A):
     """Swap main and the anti-diagonal."""
     B = A.copy()
-    
-    pass
-    
+    n,_ = B.shape
+
+    for i in range(n):
+        B[i,i] = A[i,n-1-i]
+        B[i,n-1-i] = A[i,i]
+
     return B
 
 # --- Linear algebra ---
 
 def project(x, y):
     """Return the projection of a (vector) x onto the direction of y."""
-    pass
+
+    return (x@y)/(y@y)*y
 
 
 def check_orthonormal(x, y):
     """Check if two vectors are orthonormal (orthogonal + unit length).
     Returns True if they are orthonormal, False otherwise."""
-    pass
+
+    return np.allclose(x@x,1) and np.allclose(x@y, 0) and np.allclose(y@y, 1)
 
 
 def linear_map(A, x):
     """Apply a linear map defined by matrix A to vector x."""
-    pass
+
+    return A@x
 
 
 def inverse_map(A, y):
     """Apply the inverse of a linear map defined by matrix A to vector y."""
-    pass
+    B = np.linalg.inv(A)
+    return B@y
 
 
 def solve_via_eigenbasis(n=4):
@@ -69,30 +94,38 @@ def solve_via_eigenbasis(n=4):
     print("\n--- Solve in Eigenbasis ---")
 
     # Step 1: Generate a radnom linear system
-    # Generate a random M that is invertible, i.e. det(M) != 0), 
+    # Generate a random M that is invertible, i.e. det(M) != 0),
     # and a random vector vector b.
-    pass
+    M = np.random.uniform(size=(n,n))
+    while np.allclose(np.linalg.det(M),0):
+        M = np.random.uniform(size=(n,n))
+    b = np.random.rand(n)
 
     # Step 2: Perform eigen-decomposition of M
     # Make use of numpy's eigenvalue decomposition function np.linalg.eig,
     # and the numpy function np.diag.
-    pass
+    eigval, Pt = np.linalg.eig(M)
+    D = np.diag(eigval)
+    P = np.linalg.inv(Pt)
+    H = (Pt@D)@P
 
     # Step 3: Express b in the eigenbasis
-    pass
+    bp = P@b
 
     # Step 4: Solve in eigenbasis (diagonal system)
-    pass
+    y = bp/eigval
 
     # Step 5: Map back to original space
-    pass
+    x = Pt@y
 
     # Step 6: Verification
-    pass
-
-    # If result is correct return all relevant variables: M, x, b
-    pass
-    return None, None, None
+    xp = np.linalg.solve(M,b)
+    if not np.allclose(xp, x):
+        #print("Expected answer:", xp, "found: ", x)
+        return
+    else:
+        # If result is correct return all relevant variables: M, x, b
+        return M,x,b
 
 
 
@@ -159,7 +192,7 @@ if __name__ == "__main__":
     proj_v_onto_z = project(v, z)
 
     v_new = proj_v_onto_u * u + proj_v_onto_z * z
-    
+
     if check_orthonormal(u, z):
         if np.allclose(v, v_new):
             print("Projection successful!")
@@ -179,10 +212,10 @@ if __name__ == "__main__":
 
     # 8. Solve via transformed space
     print("\n8. Solve random system via transformed space:")
-    
+
     # Call the function and capture all results
-    M, b, x = solve_via_eigenbasis(n=4)
-    
+    M, x, b = solve_via_eigenbasis(n=4)
+
     print("\n--- Summary of Transformed Space Solution ---")
     print("Original system M:\n", M)
     print("Right-hand side b:", b)
