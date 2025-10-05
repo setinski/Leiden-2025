@@ -86,6 +86,7 @@ def orth_proj(x, y):
     :rtype: numpy.ndarray
     """
 	if np.allclose(y@y, 0):
+		print("Error in projection x: ", x, "y: ", y)
 		exit()
 		return
 

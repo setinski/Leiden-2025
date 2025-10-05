@@ -102,9 +102,12 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     :rtype: list[numpy.ndarray]
     """
     n = b1.shape[1]
-    y = ((x-t@b1)/np.linalg.norm(b1)+x)*b1
-    Z = [((x-t@b1)/np.linalg.norm(b1)+x)*b1 for z in range()]
-    return Z
+    v = t-x
+    v = orth_proj(v, b1)
+    b1n = np.linalg.norm(b1)
+    high = math.floor((np.linalg.norm(v)+r)/b1n)
+    low = math.ceil((np.linalg.norm(v)-r)/b1n)
+    return [b1*z for z in range(low, high)]
 
 
 ############
@@ -137,8 +140,17 @@ def fincke_pohst_enumeration(B, t, r):
         return fincke_pohst_1d_enumeration(B[0], 0, t, r)
     else:
         S = []
-        #projected_matrix = 
-        #S = fincke_pohst_enumeration(B, t, r)
+        Bs = [orth_proj(B[i], B[0]) for i in range(1,n)]
+        proj_t = orth_proj(t, B[0])
+        Ss = fincke_pohst_enumeration(Bs, proj_t, r)
+        for s in Ss:
+            rho = math.sqrt(r*r-np.linalg.norm(s - proj_t)**2)
+            y = s@np.linalg.pinv(Bs)
+            x = np.c_[np.zeros(1), y]@B
+            Z = fincke_pohst_1d_enumeration(B[0], x, t, rho)
+            for z in Z:
+                S.append(x+z)
+        return S
     
 
 ############
