@@ -33,9 +33,9 @@ def enumeration(x, r):
     :notes: Make use of numpy concatenate() function and the built-in append function.
     """
     n = x.shape[0]
-    S = [i for i in range(math.ceil(x[0]-r),math.floor(x[0]+r))]
+    S = [i for i in range(math.ceil(x[0]-r),math.ceil(x[0]+r))]
     for i in range(1,n):
-        T = range(math.ceil(x[i]-r),math.floor(x[i]+r))
+        T = range(math.ceil(x[i]-r),math.ceil(x[i]+r))
         S = product(T,S)
     return S
     """
@@ -103,10 +103,10 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     :rtype: list[numpy.ndarray]
     """
     v = t-x
-    v = project(v, b1)
     b1n = np.linalg.norm(b1)
-    high = math.floor((np.linalg.norm(v)+r)/b1n)
-    low = math.ceil((np.linalg.norm(v)-r)/b1n)
+    offset = v@b1/b1n
+    high = math.ceil((offset+r)/b1n)
+    low = math.ceil((offset-r)/b1n)
 
     #result = [b1*z for z in range(low, high)]
 
