@@ -35,8 +35,15 @@ def lagrange_reduce(B):
 		raise ValueError("Input basis B must have exactly two vectors (2 rows).")
 
 	U = np.identity(2, dtype=np.int64)
-	
-	pass
+	while (np.linalg.norm(B[0])<=np.linalg.norm(B[1])):
+		B_temp=B.copy()
+		U_temp=U.copy()
+		B_temp[0]=B[1]
+		B[0]=B[1]
+		B[1]=B_temp[0]
+		k=int(np.round(B[0]@B[1])/(B[0]@B[0]))
+		B[1]=B[1]-k*B[0]
+    return U
 
 
 ############

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
 import itertools
+import math
 from sol2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
 
@@ -88,13 +89,15 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     result=[]
     maxdistance=r/np.linalg.norm(b1)
     t_new=t-x
+    b1 = b1.flatten()
+    t_new = t_new.flatten()
     proj=(t_new@b1)/(b1@b1)
     high = int(np.floor(proj+maxdistance)+1)  
     low = int(np.ceil(proj-maxdistance)) 
-    ranges=ranges.append(range(low, high))
+    ranges=range(low, high)
 
     for z in ranges:
-        pt=b1@z+t_new
+        pt=b1*z+t_new
         result.append(np.array(pt))
     return result
 
@@ -126,19 +129,21 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
 def fincke_pohst_enumeration(B, t, r):
     n=B.shape[0]
     b1=B[0,:]
+    t = t.flatten()
     proj=(t@b1)/(b1@b1)
     if n==1:
         return fincke_pohst_1d_enumeration(b1, 0, t, r)
     else:
         S=[]
         Bs=Gram_Schmidt_orth(B)
-        S_temp=fincke_pohst_enumeration(Bs, proj, r)
+        S_temp=fincke_pohst_enumeration(Bs, proj*b1, r)
         for s in S_temp:
-            rho=0
-            y=s
-            x=y
+            rho=math.sqrt(r**2-np.linalg.norm(s-proj)**2)
+            y=np.linalg.inv(Bs)@s
+            x=B@y
             Z=fincke_pohst_1d_enumeration(b1, x, t, rho)
-            S.append(Z)
+            for z in Z:
+                S.append(z)
     return S
     """
     Enumerate all lattice vectors within distance `r` from `t`
