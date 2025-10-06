@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from sol1 import Gram_Schmidt_orth, nearest_plane
+from sol2 import Gram_Schmidt_orth, nearest_plane
 from math import sqrt, log
 from sys import exit
 
@@ -110,6 +110,14 @@ def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=True):
 	"""
 	
 	pass
+
+	for _ in range(max_iter):
+		if animate:
+			yield [log(np.linalg.norm(v)) for v in Bs]
+
+		pass
+
+	raise RuntimeError("LLL did not converge within the maximum number of iterations.")
 
 
 ############

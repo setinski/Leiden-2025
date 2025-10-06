@@ -85,23 +85,19 @@ def simple_enumeration(B, t, l):
 ############
 
 def fincke_pohst_1d_enumeration(b1, x, t, r):
-
-    for i in range(len(b1)):
-        while np.linalg.norm((((-t)@b1)/(b1@b1)+z)@b1)<=r:
-
-
-
-        high = int(np.floor(b1[i] + r)+1)  
-        low = int(np.ceil(b1[i] - r)) 
-        ranges.append(range(low, high))
     result=[]
-    for point in itertools.product(*ranges):
-        result.append(np.array(point))
+    maxdistance=r/np.linalg.norm(b1)
+    t_new=t-x
+    proj=(t_new@b1)/(b1@b1)
+    high = int(np.floor(proj+maxdistance)+1)  
+    low = int(np.ceil(proj-maxdistance)) 
+    ranges=ranges.append(range(low, high))
+
+    for z in ranges:
+        pt=b1@z+t_new
+        result.append(np.array(pt))
     return result
 
-
-
-    return 
 
     """
     Enumerate all lattice points along the line spanned by the basis vector `b1`
@@ -128,6 +124,22 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
 ############
 
 def fincke_pohst_enumeration(B, t, r):
+    n=B.shape[0]
+    b1=B[0,:]
+    proj=(t@b1)/(b1@b1)
+    if n==1:
+        return fincke_pohst_1d_enumeration(b1, 0, t, r)
+    else:
+        S=[]
+        Bs=Gram_Schmidt_orth(B)
+        S_temp=fincke_pohst_enumeration(Bs, proj, r)
+        for s in S_temp:
+            rho=0
+            y=s
+            x=y
+            Z=fincke_pohst_1d_enumeration(b1, x, t, rho)
+            S.append(Z)
+    return S
     """
     Enumerate all lattice vectors within distance `r` from `t`
     in the lattice defined by basis `B`.
@@ -146,8 +158,6 @@ def fincke_pohst_enumeration(B, t, r):
     for matrix pseudo inversion.
     """
 
-    pass
-    
 
 ############
 # Helper functions

@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
-from itertools import product
 from sol2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
 
@@ -28,38 +27,38 @@ def enumeration(x, r):
     within distance `r` (per coordinate) from `x`.
     :rtype: list of numpy.ndarray
 
-    :notes: Make use of itertools product function
-    and the built-in append function.
+    :notes: Make use of numpy concatenate() function and the built-in append function.
     """
 
-    # # Base case: no dimensions left
-    # if len(x) == 0:
-    #     return [np.array([], dtype=int)]
+    # Base case: no dimensions left
+    if len(x) == 0:
+        return [np.array([], dtype=int)]
     
-    # results = []
+    results = []
 
-    # # Loop over all integer coordinates within ±r of t[0]
-    # lower = int(np.ceil(x[0] - r))
-    # upper = int(np.ceil(x[0] + r))
+    # Loop over all integer coordinates within ±r of t[0]
+    lower = int(np.ceil(x[0] - r))
+    upper = int(np.ceil(x[0] + r))
 
-    # for coord in range(lower, upper):
-    #     # Recursively enumerate for the rest of the coordinates
-    #     for sub_result in enumeration(x[1:], r):
-    #         # Create a new vector by prepending the current coordinate
-    #         vec = np.concatenate(([coord], sub_result))
-    #         results.append(vec)
+    for coord in range(lower, upper):
+        # Recursively enumerate for the rest of the coordinates
+        for sub_result in enumeration(x[1:], r):
+            # Create a new vector by prepending the current coordinate
+            vec = np.concatenate(([coord], sub_result))
+            results.append(vec)
 
-    # return results
+    return results
 
     # Alternative approach: with itertool.product (commented out)
 
-    ranges = [range(int(np.ceil(xi - r)), int(np.floor(xi + r)) + 1) for xi in x]
+    # ranges = [range(int(np.ceil(xi - r)), int(np.floor(xi + r)) + 1) for xi in x]
 
-    results = []
-    for coordinates in product(*ranges):
-        results.append(coordinates)
-    
-    return results
+    # results = []
+    # for coords in product(*ranges):
+    #     vec = np.concatenate([np.array([c]) for c in coords])
+    #     results.append(vec)
+
+    # return results
 
 
 ############
@@ -181,10 +180,10 @@ def fincke_pohst_enumeration(B, t, r):
     b1 = B[0]
 
     # Build sub-basis orthogonal to b1
-    B_sub = np.array([orth_proj(B[i], b1) for i in range(1, n)])
+    B_sub = np.array([B[i] - orth_proj(B[i], b1) for i in range(1, n)])
 
     # Project target vector orthogonal to b1
-    t_sub = orth_proj(t, b1)
+    t_sub = t - orth_proj(t, b1)
 
     # Recursively enumerate in subspace
     sub_results = fincke_pohst_enumeration(B_sub, t_sub, r)
