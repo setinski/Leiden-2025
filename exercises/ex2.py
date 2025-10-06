@@ -33,7 +33,6 @@ def in_lattice(B, v):
 	xr = np.round(x)
 	return np.allclose(x, xr)
 
-
 ############
 # Exercise 1
 # Implement the Simple Rounding Algorithm 
@@ -79,9 +78,8 @@ def orth_proj(x, y):
 	:rtype: numpy.ndarray
 	"""
 	if np.allclose(y, 0):
-        	return 0
+		return 0
 	return (x @ y)/(y @ y) * y
-
 
 def Gram_Schmidt_orth(B):
 	"""
@@ -128,6 +126,7 @@ def nearest_plane(B, Bs, t):
     :rtype: numpy.ndarray
 
     :notes: Make use of numpy round() function and the built-in int() conversion.
+    (!) Use built-in copy function to create a copy of t.
     """
 	n = B.shape[0]
 	v = np.zeros(n)
@@ -181,11 +180,11 @@ def compare_norm_distrib(B, num_samples):
 # Helper functions
 ############
 
-def plot_two_hist(data_SR, data_NP, n, save=True):
+def plot_two_hist(data_SR, data_NP, n, save=False):
     """Take is input two lists and plot two histograms"""
 	
-    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Original basis")
-    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Orthogonal basis")
+    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Original basis distribution")
+    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Gram–Schmidt basis distribution")
 	
     plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
     plt.legend()
@@ -199,7 +198,7 @@ def plot_two_hist(data_SR, data_NP, n, save=True):
     plt.close()
 	
 
-def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=True):
+def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, title="", save=False):
     """Draw lattice tiling, points, basis, and optional extras."""
     plt.figure(figsize=(6, 6))
 

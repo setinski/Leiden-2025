@@ -59,7 +59,7 @@ def simple_rounding(B, t):
     x = t @ np.linalg.inv(B)
 	# Alternative option:
     # x = np.linalg.solve(B.transpose(), t)
-    #xr = np.round(x)
+    xr = np.round(x)
     return xr @ B
 
 
@@ -136,11 +136,12 @@ def nearest_plane(B, Bs, t):
     :rtype: numpy.ndarray
 
     :notes: Make use of numpy round() function and the built-in int() conversion.
+    (!) Use built-in copy function to create a copy of t.
     """
 
 	n,d = B.shape
 
-	e = t
+	e = np.copy(t)
 	v = zeros(d, dtype=int)
 
 	for i in reversed(range(n)):
@@ -192,8 +193,8 @@ def compare_norm_distrib(B, num_samples):
 def plot_two_hist(data_SR, data_NP, n, save=False):
     """Take is input two lists and plot two histograms"""
 	
-    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Simple Rounding")
-    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Nearest Plane")
+    _, bins, _ = plt.hist(data_SR, bins=100, density=True, label="Original basis distribution")
+    _ = plt.hist(data_NP, bins=bins, alpha=0.5, density=True, label="Gram–Schmidt basis distribution")
 	
     plt.title("Length of random points in Fundamental Parallelepiped \n Basis dimension: %d"%n)
     plt.legend()
