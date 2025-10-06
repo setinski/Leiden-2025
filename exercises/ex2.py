@@ -90,8 +90,8 @@ def orth_proj(x, y):
 		exit()
 		return
 
-	x = (x@y)/(y@y) * y
-	return x
+	z = (x@y)/(y@y) * y
+	return z
 
 
 

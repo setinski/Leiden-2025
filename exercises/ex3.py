@@ -32,7 +32,7 @@ def enumeration(x, r):
     :notes: Make use of numpy concatenate() function and the built-in append function.
     """
     n = x.shape[0]
-    S = [range(math.ceil(x[0]-r),math.floor(x[0]+r))]
+    S = [i for i in range(math.ceil(x[0]-r),math.floor(x[0]+r))]
     for i in range(1,n):
         T = range(math.ceil(x[i]-r),math.floor(x[i]+r))
         S = product(T,S)
@@ -72,7 +72,7 @@ def simple_enumeration(B, t, l):
     c = np.ndarray(t.shape, dtype=int)
     c.fill(np.iinfo(int).max)
     for v in S:
-        v = np.ndarray(v)@B
+        v = np.array(v)@B
         if np.linalg.norm(v-t) < np.linalg.norm(c-t):
             c = v
     return c
@@ -101,7 +101,6 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
              that satisfy the radius constraint.
     :rtype: list[numpy.ndarray]
     """
-    n = b1.shape[1]
     v = t-x
     v = orth_proj(v, b1)
     b1n = np.linalg.norm(b1)
@@ -133,14 +132,13 @@ def fincke_pohst_enumeration(B, t, r):
     :notes: Make use of np.linalg.lstsq (i.e. the least-square method) or np.linalg.pinv
     for matrix pseudo inversion.
     """
-
     n = B.shape[0]
 
     if n == 1:
         return fincke_pohst_1d_enumeration(B[0], 0, t, r)
     else:
         S = []
-        Bs = [orth_proj(B[i], B[0]) for i in range(1,n)]
+        Bs = np.array([orth_proj(B[i], B[0]) for i in range(1,n)])
         proj_t = orth_proj(t, B[0])
         Ss = fincke_pohst_enumeration(Bs, proj_t, r)
         for s in Ss:
@@ -253,7 +251,7 @@ def run_lattice_demo(B, t, l):
     print("\nRunning simple enumeration...")
     simple_enum_vec = simple_enumeration(B, t, l)
     print("Closest lattice vector (enumeration):", simple_enum_vec)
-
+ 
     # Fincke-Phost enumeration
     Bs = Gram_Schmidt_orth(B)
     x = nearest_plane(B, Bs, t)
@@ -262,6 +260,7 @@ def run_lattice_demo(B, t, l):
 
     print("\nRunning Fincke-Phost enumeration...")
     fincke_pohst_enum_vec = fincke_pohst_enumeration(B, t, r)
+    print(fincke_pohst_enum_vec)
     fincke_pohst_enum_vec_min = min(fincke_pohst_enum_vec, key=lambda v: np.linalg.norm(np.array(v) - t))
     print("Closest lattice vector (Fincke-Phost enumeration):", fincke_pohst_enum_vec_min)
 
