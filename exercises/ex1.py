@@ -58,7 +58,10 @@ def modify_diags(A):
 
 def project(x, y):
     """Return the projection of a (vector) x onto the direction of y."""
-
+    if np.allclose(y@y, 0):
+        print("Error in projection x: ", x, "y: ", y)
+        exit()
+        return
     return (x@y)/(y@y)*y
 
 

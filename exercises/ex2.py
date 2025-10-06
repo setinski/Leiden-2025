@@ -60,7 +60,7 @@ def simple_rounding(B, t):
     :notes: Make use of numpy.linalg function solve and numpy function round.
     """
 	#x = v@ np.linalg.inv(B)
-	x = np.linalg.solve(B.transpose(), t)
+	x = np.linalg.solve(B.T, t)
 	xr = np.round(x)
 
 	return xr@B

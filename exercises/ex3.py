@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
 import matplotlib.patches as patches
+from ex1 import project
 from ex2 import simple_rounding, orth_proj, Gram_Schmidt_orth, nearest_plane
 from generic_functions import generate_lattice_points, in_lattice
 from itertools import product
@@ -67,7 +68,7 @@ def simple_enumeration(B, t, l):
 
 	:notes: Make use of numpy.linalg function solve and numpy function round.
 	"""
-    tp = np.linalg.solve(B, t)
+    tp = np.linalg.solve(B.T, t)
     S = enumeration(tp, l/2.)
     c = np.ndarray(t.shape, dtype=int)
     c.fill(np.iinfo(int).max)
@@ -102,10 +103,13 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     :rtype: list[numpy.ndarray]
     """
     v = t-x
-    v = orth_proj(v, b1)
+    v = project(v, b1)
     b1n = np.linalg.norm(b1)
     high = math.floor((np.linalg.norm(v)+r)/b1n)
     low = math.ceil((np.linalg.norm(v)-r)/b1n)
+
+    #result = [b1*z for z in range(low, high)]
+
     return [b1*z for z in range(low, high)]
 
 
@@ -138,13 +142,14 @@ def fincke_pohst_enumeration(B, t, r):
         return fincke_pohst_1d_enumeration(B[0], 0, t, r)
     else:
         S = []
-        Bs = np.array([orth_proj(B[i], B[0]) for i in range(1,n)])
-        proj_t = orth_proj(t, B[0])
+        Bs = np.array([B[i]-project(B[i], B[0]) for i in range(1,n)])
+        proj_t = t - project(t, B[0])
         Ss = fincke_pohst_enumeration(Bs, proj_t, r)
         for s in Ss:
             rho = math.sqrt(r*r-np.linalg.norm(s - proj_t)**2)
             y = s@np.linalg.pinv(Bs)
-            x = np.c_[np.zeros(1), y]@B
+            x = y@B[1:]
+            
             Z = fincke_pohst_1d_enumeration(B[0], x, t, rho)
             for z in Z:
                 S.append(x+z)
