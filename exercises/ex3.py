@@ -17,11 +17,16 @@ from generic_functions import generate_lattice_points, in_lattice
 
 def enumeration(x, r):
     n=len(x)
+
+    if n==0:
+        return [np.array([], dtype=int)]
     ranges = []
+
     for i in range(n):
         high = int(np.floor(x[i] + r)+1)  
         low = int(np.ceil(x[i] - r)) 
         ranges.append(range(low, high))
+
     result=[]
     for point in itertools.product(*ranges):
         result.append(np.array(point))
@@ -88,19 +93,16 @@ def simple_enumeration(B, t, l):
 def fincke_pohst_1d_enumeration(b1, x, t, r):
     result=[]
     maxdistance=r/np.linalg.norm(b1)
-    t_new=t-x
-    b1 = b1.flatten()
-    t_new = t_new.flatten()
+    t_new=x-t
     proj=(t_new@b1)/(b1@b1)
-    high = int(np.floor(proj+maxdistance)+1)  
-    low = int(np.ceil(proj-maxdistance)) 
+    high = int(np.floor(maxdistance-proj)+1)  
+    low = int(np.ceil(-maxdistance-proj)) 
     ranges=range(low, high)
 
     for z in ranges:
         pt=b1*z+t_new
         result.append(np.array(pt))
     return result
-
 
     """
     Enumerate all lattice points along the line spanned by the basis vector `b1`
@@ -129,21 +131,21 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
 def fincke_pohst_enumeration(B, t, r):
     n=B.shape[0]
     b1=B[0,:]
-    t = t.flatten()
-    proj=(t@b1)/(b1@b1)
     if n==1:
         return fincke_pohst_1d_enumeration(b1, 0, t, r)
-    else:
-        S=[]
-        Bs=Gram_Schmidt_orth(B)
-        S_temp=fincke_pohst_enumeration(Bs, proj*b1, r)
-        for s in S_temp:
-            rho=math.sqrt(r**2-np.linalg.norm(s-proj)**2)
-            y=np.linalg.inv(Bs)@s
-            x=B@y
-            Z=fincke_pohst_1d_enumeration(b1, x, t, rho)
-            for z in Z:
-                S.append(z)
+
+    S=[]
+    Bprime=np.zeros((n-1, n))
+    for i in range(Bprime.shape[0]):
+        Bprime[i]=B[i+1]-orth_proj(B[i+1], b1)
+    S_temp=fincke_pohst_enumeration(Bprime, orth_proj(t,b1), r)
+    for s in S_temp:
+        rho=math.sqrt(r**2-np.linalg.norm(s-(t-orth_proj(t,b1)))**2)
+        y=np.linalg.pinv(Bprime)@s
+        x=y @ B[1:]
+        Z=fincke_pohst_1d_enumeration(b1, x, t, rho)
+        if Z:
+            S.extend(Z)
     return S
     """
     Enumerate all lattice vectors within distance `r` from `t`
