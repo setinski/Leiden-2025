@@ -130,7 +130,7 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
 
 def fincke_pohst_enumeration(B, t, r):
     n=B.shape[0]
-    b1=B[0,:]
+    b1=B[0,:] #first vector
     if n==1:
         return fincke_pohst_1d_enumeration(b1, 0, t, r)
 
