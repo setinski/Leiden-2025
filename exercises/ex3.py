@@ -23,7 +23,7 @@ def enumeration(x, r):
     ranges = []
 
     for i in range(n):
-        high = int(np.floor(x[i] + r)+1)  
+        high = int(np.floor(x[i] + r))+1  
         low = int(np.ceil(x[i] - r)) 
         ranges.append(range(low, high))
 
@@ -58,7 +58,7 @@ def simple_enumeration(B, t, l):
     c = np.ndarray(t.shape, dtype=int)
     c.fill(np.iinfo(int).max)
 
-    t_new=t @ np.linalg.inv(B)
+    t_new=np.linalg.solve(B.T, t)
     enum=enumeration(t_new, l/2)
 
     assert enum, "Enumeration returned None, expected a list of vectors."
@@ -95,12 +95,12 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
     maxdistance=r/np.linalg.norm(b1)
     t_new=x-t
     proj=(t_new@b1)/(b1@b1)
-    high = int(np.floor(maxdistance-proj)+1)  
+    high = int(np.ceil(maxdistance-proj))  
     low = int(np.ceil(-maxdistance-proj)) 
     ranges=range(low, high)
 
     for z in ranges:
-        pt=b1*z+t_new
+        pt=b1*z+x
         result.append(np.array(pt))
     return result
 
@@ -130,18 +130,20 @@ def fincke_pohst_1d_enumeration(b1, x, t, r):
 
 def fincke_pohst_enumeration(B, t, r):
     n=B.shape[0]
-    b1=B[0,:] #first vector
+    b1=B[0,:]
     if n==1:
-        return fincke_pohst_1d_enumeration(b1, 0, t, r)
+        return fincke_pohst_1d_enumeration(b1, np.zeros(len(t)), t, r)
 
-    S=[]
-    Bprime=np.zeros((n-1, n))
+    Bprime=np.zeros((n-1, B.shape[1]))
     for i in range(Bprime.shape[0]):
         Bprime[i]=B[i+1]-orth_proj(B[i+1], b1)
-    S_temp=fincke_pohst_enumeration(Bprime, orth_proj(t,b1), r)
+
+    S=[]
+    
+    S_temp=fincke_pohst_enumeration(Bprime, t-orth_proj(t,b1), r)
     for s in S_temp:
         rho=math.sqrt(r**2-np.linalg.norm(s-(t-orth_proj(t,b1)))**2)
-        y=np.linalg.pinv(Bprime)@s
+        y, _, _, _ = np.linalg.lstsq(Bprime.T, s, rcond=None)
         x=y @ B[1:]
         Z=fincke_pohst_1d_enumeration(b1, x, t, rho)
         if Z:
