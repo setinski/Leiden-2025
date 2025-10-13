@@ -5,25 +5,41 @@ import matplotlib.pyplot as plt
 
 def gen_checkerboard(n, k):
     """Return an n x k checkerboard of 0s and 1s."""
-    # test
-    pass
-
+    a = np.zeros((n,k))
+    # the obvious solution
+    #
+    # for i in range(0,n):
+    #     for j in range(0,k):
+    #         if (j+i) % 2 == 1:
+    #             a[i][j] = 1
+    #
+    # is slightly slower than:
+    for j in range(1,k,2):
+            a[0][j] = 1
+            a[1][j-1] = 1
+    for i in range(1,n):
+            a[i,:] = a[i%2,:]
+    return a
 
 def gen_triangle_mat(n):
     """Return an n x n lower-triangular matrix of 1s."""
-    pass
+    a = np.zeros((n,n))
+    for i in range(n):
+        for j in range(i+1):
+            a[i][j] = 1
+    return a
 
 
 def gen_rand_int(n, k, low, high):
     """Return an n x k matrix of random integers in [low, high)."""
-    pass
-
+    return np.random.randint(low,high,(n,k))
 
 # --- Matrix manipulation ---
 
 def reverse_rows(A):
     """Return a matrix with rows reversed."""
-    pass
+    
+    return A
 
 
 def modify_diags(A):
@@ -119,7 +135,6 @@ if __name__ == "__main__":
     cb = gen_checkerboard(8, 8)
     print(cb)
     plot_checkerboard(cb)
-
     input("Press Enter to continue...")
 
     # 2. Lower-triangular
