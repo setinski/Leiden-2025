@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from sol2 import Gram_Schmidt_orth, nearest_plane
+from sol2 import Gram_Schmidt_orth, nearest_plane, orth_proj
 from math import sqrt, log
 from sys import exit
 
@@ -35,15 +35,17 @@ def lagrange_reduce(B):
 		raise ValueError("Input basis B must have exactly two vectors (2 rows).")
 
 	U = np.identity(2, dtype=np.int64)
-	while (np.linalg.norm(B[0])<=np.linalg.norm(B[1])):
-		B_temp=B.copy()
-		U_temp=U.copy()
-		B_temp[0]=B[1]
+	while (np.linalg.norm(B[0])>np.linalg.norm(B[1])):
+		tempB=B[0].copy()
+		tempU=U[0].copy()
 		B[0]=B[1]
-		B[1]=B_temp[0]
-		k=int(np.round(B[0]@B[1])/(B[0]@B[0]))
-		B[1]=B[1]-k*B[0]
-    return U
+		U[0]=U[1]
+		B[1]=tempB
+		U[1]=tempU
+		k=int(np.round((B[0]@B[1])/(B[0]@B[0])))
+		B[1]-=k*B[0]
+		U[1]-=k*U[0]
+	return U
 
 
 ############
@@ -53,7 +55,11 @@ def lagrange_reduce(B):
 ############
 
 def size_reduce(B, Bs):
-	"""
+    for i in range(B.shape[0]):
+        v=nearest_plane(B[0:i], Bs[0:i], B[i])
+        B[i]-=v
+    return
+    """
     Apply size reduction to a lattice basis `B` using its Gram-Schmidt orthogonalization `Bs`.
 
     :param B: A NumPy array of shape (n, m), representing the lattice basis.
@@ -75,8 +81,6 @@ def size_reduce(B, Bs):
 	implementation in python, an iterative version will be much simpler
     """
 
-	pass
-
 
 ############
 # Exercise 3
@@ -85,7 +89,7 @@ def size_reduce(B, Bs):
 ############
 
 def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=True):
-	"""
+    """
 	Perform LLL (Lenstra–Lenstra–Lovász) lattice basis reduction.
 
 	:param B: A NumPy array of shape (n, m), where each row is a basis vector.
@@ -114,17 +118,30 @@ def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=True):
 	B and B* by noting that:
 	pi_i(b_i) = b*_i and 
 	pi_i(b_{i+1}) = b*_{i+1} + (<b_i+1, b*_i> / ||b*_i||^2) * b*_i
-	"""
-	
-	pass
+    """
+    Bs=Gram_Schmidt_orth(B)
+    size_reduce(B,Bs)
 
-	for _ in range(max_iter):
-		if animate:
-			yield [log(np.linalg.norm(v)) for v in Bs]
+    for _ in range(max_iter):
+        if animate:
+            yield [log(np.linalg.norm(v)) for v in Bs]
 
-		pass
+        changed=False
+        for i in range(B.shape[0]-1):
+            Bs = Gram_Schmidt_orth(B)
+            if np.linalg.norm(Bs[i]) > (gamma_2 + epsilon) * np.linalg.norm(Bs[i+1]):
+                v1=Bs[i]
+                v2=Bs[i+1]+orth_proj(B[i+1], Bs[i])
+                U = lagrange_reduce(np.array([v1,v2]))
+                B[i:i+2] = U @ B[i:i+2]
+                Bs = Gram_Schmidt_orth(B)
+                size_reduce(B, Bs)
+                changed=True
 
-	raise RuntimeError("LLL did not converge within the maximum number of iterations.")
+        if not changed:
+            return
+
+    raise RuntimeError("LLL did not converge within the maximum number of iterations.")
 
 
 ############
@@ -155,7 +172,7 @@ def anim_LLL(n, q):
 		line2.set_ydata(data[frame])
 		return line2
 
-	return animation.FuncAnimation(fig=fig,func=update_anim, frames=len(data), interval=50)
+	return animation.FuncAnimation(fig=fig,func=update_anim, frames=len(data), interval=200)
 
 ############
 # Main runner
