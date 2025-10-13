@@ -127,16 +127,23 @@ def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=True):
             yield [log(np.linalg.norm(v)) for v in Bs]
 
         changed=False
+        skipnext=False
+        Bs = Gram_Schmidt_orth(B)
         for i in range(B.shape[0]-1):
-            Bs = Gram_Schmidt_orth(B)
+            if skipnext:
+                skipnext=False
+                continue
             if np.linalg.norm(Bs[i]) > (gamma_2 + epsilon) * np.linalg.norm(Bs[i+1]):
                 v1=Bs[i]
                 v2=Bs[i+1]+orth_proj(B[i+1], Bs[i])
                 U = lagrange_reduce(np.array([v1,v2]))
+                if np.allclose(U, np.identity(2)):
+                      continue
                 B[i:i+2] = U @ B[i:i+2]
                 Bs = Gram_Schmidt_orth(B)
                 size_reduce(B, Bs)
                 changed=True
+                skipnext=True
 
         if not changed:
             return
@@ -172,7 +179,7 @@ def anim_LLL(n, q):
 		line2.set_ydata(data[frame])
 		return line2
 
-	return animation.FuncAnimation(fig=fig,func=update_anim, frames=len(data), interval=200)
+	return animation.FuncAnimation(fig=fig,func=update_anim, frames=len(data), interval=50)
 
 ############
 # Main runner
