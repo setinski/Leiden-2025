@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def gen_checkerboard(n, k):
     """Return an n x k checkerboard of 0s and 1s."""
-    a = np.zeros((n,k))
+    a = np.zeros((n,k), dtype=int)
     # the obvious solution
     #
     # for i in range(0,n):
@@ -23,7 +23,7 @@ def gen_checkerboard(n, k):
 
 def gen_triangle_mat(n):
     """Return an n x n lower-triangular matrix of 1s."""
-    a = np.zeros((n,n))
+    a = np.zeros((n,n), dtype=int)
     for i in range(n):
         for j in range(i+1):
             a[i][j] = 1
@@ -38,39 +38,45 @@ def gen_rand_int(n, k, low, high):
 
 def reverse_rows(A):
     """Return a matrix with rows reversed."""
-    
-    return A
+    B = A.copy()
+    i = 0
+    for row in A:
+        B[i,:] = row[::-1]
+        i += 1
+    return B
 
 
 def modify_diags(A):
     """Swap main and the anti-diagonal."""
+    i = 0
     B = A.copy()
-    
-    pass
-    
+    for row in A:
+        B[i,i] = row[-i-1]
+        B[i,-i-1] = row[i]
+        i += 1
     return B
 
 # --- Linear algebra ---
 
 def project(x, y):
     """Return the projection of a (vector) x onto the direction of y."""
-    pass
+    return (x@y)/(y@y)*y 
 
 
 def check_orthonormal(x, y):
     """Check if two vectors are orthonormal (orthogonal + unit length).
     Returns True if they are orthonormal, False otherwise."""
-    pass
+    return x @ y == 0
 
 
 def linear_map(A, x):
     """Apply a linear map defined by matrix A to vector x."""
-    pass
+    return A @ x
 
 
 def inverse_map(A, y):
     """Apply the inverse of a linear map defined by matrix A to vector y."""
-    pass
+    return np.linalg.inv(A) @ y
 
 
 def solve_via_eigenbasis(n=4):
@@ -85,30 +91,36 @@ def solve_via_eigenbasis(n=4):
     """
     print("\n--- Solve in Eigenbasis ---")
 
-    # Step 1: Generate a radnom linear system
+    # Step 1: Generate a random linear system
     # Generate a random M that is invertible, i.e. det(M) != 0), 
     # and a random vector vector b.
-    pass
+    M = np.random.rand(n, n)
+    np.fill_diagonal(M, np.sum(np.abs(M), axis=1))
+    # this ensures that M is diagonally dominant and hence invertible
+    b = np.random.rand(n)
 
     # Step 2: Perform eigen-decomposition of M
     # Make use of numpy's eigenvalue decomposition function np.linalg.eig,
     # and the numpy function np.diag.
-    pass
+    v,P = np.linalg.eig(M)
+    D = np.diag(1/v) # inverse of eigenvalues
+    print(D)
+    Pinv = np.linalg.inv(P)
 
     # Step 3: Express b in the eigenbasis
-    pass
+    bprime = Pinv @ b
 
     # Step 4: Solve in eigenbasis (diagonal system)
-    pass
+    y = D @ bprime
 
     # Step 5: Map back to original space
-    pass
+    x = P @ y
 
     # Step 6: Verification
-    pass
-
     # If result is correct return all relevant variables: M, x, b
-    pass
+    if np.all([M@x, b]):
+        return M, x, b
+    
     return None, None, None
 
 
@@ -130,40 +142,40 @@ def plot_checkerboard(A):
 
 if __name__ == "__main__":
 
-    # 1. Checkerboard
-    print("\n1. Checkerboard:")
-    cb = gen_checkerboard(8, 8)
-    print(cb)
-    plot_checkerboard(cb)
-    input("Press Enter to continue...")
+    # # 1. Checkerboard
+    # print("\n1. Checkerboard:")
+    # cb = gen_checkerboard(8, 8)
+    # print(cb)
+    # plot_checkerboard(cb)
+    # input("Press Enter to continue...")
 
-    # 2. Lower-triangular
-    print("\n2. Lower-triangular matrix (5x5):")
-    tri = gen_triangle_mat(5)
-    print(tri)
-    input("Press Enter to continue...")
+    # # 2. Lower-triangular
+    # print("\n2. Lower-triangular matrix (5x5):")
+    # tri = gen_triangle_mat(5)
+    # print(tri)
+    # input("Press Enter to continue...")
 
-    # 3. Lower-triangular
-    print("\n3. Random matrix (5x5) with values from [1,5):")
-    rand_mat = gen_rand_int(5, 5, 1, 5)
-    print(rand_mat)
-    input("Press Enter to continue...")
+    # # 3. Lower-triangular
+    # print("\n3. Random matrix (5x5) with values from [1,5):")
+    # rand_mat = gen_rand_int(5, 5, 1, 5)
+    # print(rand_mat)
+    # input("Press Enter to continue...")
 
-    # 4. Reverse rows
-    print("\n4. Reverse rows:")
-    mat3 = np.arange(1, 10).reshape(3, 3)
-    rev = reverse_rows(mat3)
-    print("Original matrix:\n", mat3)
-    print("Reversed rows matrix:\n", rev)
-    input("Press Enter to continue...")
+    # # 4. Reverse rows
+    # print("\n4. Reverse rows:")
+    # mat3 = np.arange(1, 10).reshape(3, 3)
+    # rev = reverse_rows(mat3)
+    # print("Original matrix:\n", mat3)
+    # print("Reversed rows matrix:\n", rev)
+    # input("Press Enter to continue...")
 
-    # 5. Swap diagonals
-    print("\n5. Swap main and anti-diagonal:")
-    mat4 = np.arange(1, 10).reshape(3, 3)
-    swapped = modify_diags(mat4)
-    print("Original matrix:\n", mat4)
-    print("Swapped matrix:\n", swapped)
-    input("Press Enter to continue...")
+    # # 5. Swap diagonals
+    # print("\n5. Swap main and anti-diagonal:")
+    # mat4 = np.arange(1, 10).reshape(3, 3)
+    # swapped = modify_diags(mat4)
+    # print("Original matrix:\n", mat4)
+    # print("Swapped matrix:\n", swapped)
+    # input("Press Enter to continue...")
 
     # 6. Projections
     print("\n6. Projection:")
