@@ -142,40 +142,40 @@ def plot_checkerboard(A):
 
 if __name__ == "__main__":
 
-    # # 1. Checkerboard
-    # print("\n1. Checkerboard:")
-    # cb = gen_checkerboard(8, 8)
-    # print(cb)
-    # plot_checkerboard(cb)
-    # input("Press Enter to continue...")
+    # 1. Checkerboard
+    print("\n1. Checkerboard:")
+    cb = gen_checkerboard(8, 8)
+    print(cb)
+    plot_checkerboard(cb)
+    input("Press Enter to continue...")
 
-    # # 2. Lower-triangular
-    # print("\n2. Lower-triangular matrix (5x5):")
-    # tri = gen_triangle_mat(5)
-    # print(tri)
-    # input("Press Enter to continue...")
+    # 2. Lower-triangular
+    print("\n2. Lower-triangular matrix (5x5):")
+    tri = gen_triangle_mat(5)
+    print(tri)
+    input("Press Enter to continue...")
 
-    # # 3. Lower-triangular
-    # print("\n3. Random matrix (5x5) with values from [1,5):")
-    # rand_mat = gen_rand_int(5, 5, 1, 5)
-    # print(rand_mat)
-    # input("Press Enter to continue...")
+    # 3. Lower-triangular
+    print("\n3. Random matrix (5x5) with values from [1,5):")
+    rand_mat = gen_rand_int(5, 5, 1, 5)
+    print(rand_mat)
+    input("Press Enter to continue...")
 
-    # # 4. Reverse rows
-    # print("\n4. Reverse rows:")
-    # mat3 = np.arange(1, 10).reshape(3, 3)
-    # rev = reverse_rows(mat3)
-    # print("Original matrix:\n", mat3)
-    # print("Reversed rows matrix:\n", rev)
-    # input("Press Enter to continue...")
+    # 4. Reverse rows
+    print("\n4. Reverse rows:")
+    mat3 = np.arange(1, 10).reshape(3, 3)
+    rev = reverse_rows(mat3)
+    print("Original matrix:\n", mat3)
+    print("Reversed rows matrix:\n", rev)
+    input("Press Enter to continue...")
 
-    # # 5. Swap diagonals
-    # print("\n5. Swap main and anti-diagonal:")
-    # mat4 = np.arange(1, 10).reshape(3, 3)
-    # swapped = modify_diags(mat4)
-    # print("Original matrix:\n", mat4)
-    # print("Swapped matrix:\n", swapped)
-    # input("Press Enter to continue...")
+    # 5. Swap diagonals
+    print("\n5. Swap main and anti-diagonal:")
+    mat4 = np.arange(1, 10).reshape(3, 3)
+    swapped = modify_diags(mat4)
+    print("Original matrix:\n", mat4)
+    print("Swapped matrix:\n", swapped)
+    input("Press Enter to continue...")
 
     # 6. Projections
     print("\n6. Projection:")
