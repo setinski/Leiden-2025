@@ -58,20 +58,22 @@ def gram_schmidt_decomposition(B):
 	"""
 	Take as input a basis B and return its Gram Schmidt decomposition.
 	:param B: an (n x d) Matrix B (n <= d)
-	:return: L, D, Q such that B = TDQ, where 
+	:return: L, D, Q such that B = LDQ, where 
 	- L is Lower Triangular	with unit diagonal, 
 	- D is a diagonal matrix (represented as just a vector)
 	- and Q is orthogonal.
 	"""
-
 	# For some reason numpy offers qr but not lq. Use Transposition.
-	pass
+	Q,R = np.linalg.qr(B.T)
+	L = R.T
+	D = np.diag(L)
+	L = L @ np.diag(1/D)
+	return L, D, Q.T
 
 ### Sanity check the equation
 B = np.array([[1,2,3],[9,2,0],[0,8,3]], dtype="int")
 L, D, Q = gram_schmidt_decomposition(B)
 assert np.allclose(B, L @ np.diag(D) @ Q)
-print(L)
 ### Note: more checks on L, D, Q having the right properties 
 ### should be added.
 
