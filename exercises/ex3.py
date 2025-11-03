@@ -265,7 +265,7 @@ def run_lattice_demo(B, t, l):
 
     print("\nRunning Fincke-Phost enumeration...")
     fincke_pohst_enum_vec = fincke_pohst_enumeration(B, t, r)
-    print(fincke_pohst_enum_vec)
+    
     fincke_pohst_enum_vec_min = min(fincke_pohst_enum_vec, key=lambda v: np.linalg.norm(np.array(v) - t))
     print("Closest lattice vector (Fincke-Phost enumeration):", fincke_pohst_enum_vec_min)
 

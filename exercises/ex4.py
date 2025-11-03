@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from sol2 import Gram_Schmidt_orth, nearest_plane
+from sol2 import Gram_Schmidt_orth, nearest_plane, orth_proj
 from math import sqrt, log
 from sys import exit
 
@@ -14,7 +14,7 @@ from sys import exit
 ############
 
 def lagrange_reduce(B):
-    """
+	"""
     Apply Lagrange reduction to a 2D lattice basis `B` in place.
 
     :param B: A NumPy array of shape (2, n) representing the lattice basis.
@@ -29,11 +29,32 @@ def lagrange_reduce(B):
     :raises ValueError: If the input array does not have exactly two row vectors.
 
     :notes: Make use of in-place swapping of rows, and int() conversion.
-    """
-    if B.shape[0] != 2:
-        raise ValueError("Input basis B must have exactly two vectors (2 rows).")
+	"""
+	if B.shape[0] != 2:
+		raise ValueError("Input basis B must have exactly two vectors (2 rows).")
 
-    pass
+	U = np.eye(2, dtype=int)
+
+	k = int((B[0]@B[1])/(B[0]@B[0]))
+	B[1] -= k*B[0]
+	U = np.array([[1, -k], [0, 1]])@U
+
+	nb1 = np.linalg.norm(B[0])
+	nb2 = np.linalg.norm(B[1])
+	while nb2 > nb1:
+		print(nb1, nb2)
+		B[0], B[1] = B[1].copy(), B[0].copy()
+		U = np.array([[0,1], [1,0]])@U
+
+		k = int((B[0]@B[1])/(nb1**2))
+
+		B[1] -= k*B[0]
+		U = np.array([[1, -k], [0, 1]])@U
+
+		nb1 = np.linalg.norm(B[0])
+		nb2 = np.linalg.norm(B[1])
+	
+	return U
 
 
 ############
@@ -65,7 +86,10 @@ def size_reduce(B, Bs):
 	implementation in python, an iterative version will be much simpler
     """
 
-	pass
+	n = B.shape[0]
+
+	for i in range(n):
+		B[i] -= nearest_plane(B[:i], Bs[:i], B[i])
 
 
 ############
@@ -74,7 +98,7 @@ def size_reduce(B, Bs):
 # updated after every modification of B !
 ############
 
-def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=True):
+def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=False):
 	"""
 	Perform LLL (Lenstra–Lenstra–Lovász) lattice basis reduction.
 
@@ -106,13 +130,37 @@ def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=True):
 	pi_i(b_{i+1}) = b*_{i+1} + (<b_i+1, b*_i> / ||b*_i||^2) * b*_i
 	"""
 	
-	pass
+	Bs = Gram_Schmidt_orth(B)
+	size_reduce(B, Bs)
 
 	for _ in range(max_iter):
 		if animate:
 			yield [log(np.linalg.norm(v)) for v in Bs]
 
-		pass
+		print("flag\n")
+		for i in range(n-1):
+			np0 = np.linalg.norm(B[i])
+			np1 = np.linalg.norm(B[i+1])
+
+			if np0 > np1*(gamma_2+epsilon):
+				try:
+					C = np.array([Bs[i], Bs[i+1]+ (B[i+1]@Bs[i])/(Bs[i]@Bs[i])*Bs[i]])
+					print(C)
+				except ZeroDivisionError:
+					print("Gram Schmidt matrix has something wrong")
+					exit()
+				print("flag a")
+				lagrange_reduce(C)
+				print("flag b")
+				B[i], B[i+1] = C[0], C[1]
+
+				for j in range(i, n):
+					for h in range(j):
+						B[j] -= orth_proj(B[j], B[h])
+				size_reduce(B, Bs)
+				#np0 = np.linalg.norm(B[i])
+				#np1 = np.linalg.norm(B[i+1])
+				break
 
 	raise RuntimeError("LLL did not converge within the maximum number of iterations.")
 
@@ -128,7 +176,7 @@ def anim_LLL(n, q):
 		B[i, 0] = np.random.randint(0, q)
 
 	try:
-		data = list(LLL(B, animate=True))
+		data = list(LLL(B, animate=False))
 	except:
 		print("Exercise 4 Failed")
 		exit()
