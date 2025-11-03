@@ -29,30 +29,24 @@ def lagrange_reduce(B):
     :raises ValueError: If the input array does not have exactly two row vectors.
 
     :notes: Make use of in-place swapping of rows, and int() conversion.
-	"""
+	U"""
 	if B.shape[0] != 2:
 		raise ValueError("Input basis B must have exactly two vectors (2 rows).")
 
 	U = np.eye(2, dtype=int)
-
-	k = int((B[0]@B[1])/(B[0]@B[0]))
-	B[1] -= k*B[0]
-	U = np.array([[1, -k], [0, 1]])@U
-
-	nb1 = np.linalg.norm(B[0])
-	nb2 = np.linalg.norm(B[1])
-	while nb2 > nb1:
+	while True:
 		print(nb1, nb2)
 		B[0], B[1] = B[1].copy(), B[0].copy()
 		U = np.array([[0,1], [1,0]])@U
 
-		k = int((B[0]@B[1])/(nb1**2))
+		k = int((B[0]@B[1])/(B[0]@B[0]))
 
 		B[1] -= k*B[0]
 		U = np.array([[1, -k], [0, 1]])@U
 
-		nb1 = np.linalg.norm(B[0])
-		nb2 = np.linalg.norm(B[1])
+		if np.linalg.norm(B[0]) <= np.linalg.norm(B[1]):
+			break
+
 	
 	return U
 
@@ -139,10 +133,8 @@ def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=False):
 
 		print("flag\n")
 		for i in range(n-1):
-			np0 = np.linalg.norm(B[i])
-			np1 = np.linalg.norm(B[i+1])
 
-			if np0 > np1*(gamma_2+epsilon):
+			if np.linalg.norm(B[i]) > np.linalg.norm(B[i+1])*(gamma_2+epsilon):
 				try:
 					C = np.array([Bs[i], Bs[i+1]+ (B[i+1]@Bs[i])/(Bs[i]@Bs[i])*Bs[i]])
 					print(C)
@@ -150,13 +142,13 @@ def LLL(B, epsilon=0.01, gamma_2=sqrt(4/3), max_iter=1000, animate=False):
 					print("Gram Schmidt matrix has something wrong")
 					exit()
 				print("flag a")
-				lagrange_reduce(C)
+				U = lagrange_reduce(C)
 				print("flag b")
-				B[i], B[i+1] = C[0], C[1]
+				B[i:i + 2] = U @ B[i:i + 2]
 
 				for j in range(i, n):
 					for h in range(j):
-						B[j] -= orth_proj(B[j], B[h])
+						Bs[j] -= orth_proj(B[j], Bs[h])
 				size_reduce(B, Bs)
 				#np0 = np.linalg.norm(B[i])
 				#np1 = np.linalg.norm(B[i+1])
