@@ -80,8 +80,7 @@ def orth_proj(x, y):
     :rtype: numpy.ndarray
     """
     if np.allclose(y,0):
-         return 0
-
+        raise ValueError
     return (x@y)/(y@y)*y 
 
 def Gram_Schmidt_orth(B):
@@ -97,10 +96,12 @@ def Gram_Schmidt_orth(B):
     :rtype: numpy.ndarray   
     """
     n = np.shape(B)[0]
-    for i in range(1,n):
+    Bs = np.zeros((n,n), dtype=float)
+    for i in range(n):
+        Bs[i] = B[i]
         for j in range(i):
-            B[i] = B[i] - orth_proj(B[i],B[j])
-    return B
+            Bs[i] -= orth_proj(B[i],Bs[j])
+    return Bs
 
 ############
 # Exercise 3
@@ -138,6 +139,8 @@ def nearest_plane(B, Bs, t):
         e -= k*B[i]
     return v
 
+
+
 ############
 # Exercise 4
 # Compare the distribution of Euclidean norm of points in the fundamental
@@ -147,7 +150,7 @@ def nearest_plane(B, Bs, t):
 # There is no need to actually run simple_rounding nor nearest_plane.
 ############
 
-def compare_norm_distrib(B, num_samples): # da rivedere
+def compare_norm_distrib(B, num_samples):
     """
     Compare the distribution of vector norms in the fundamental parallelepiped
     of a lattice basis `B` versus its Gram–Schmidt orthogonalization `Bs`.
@@ -163,9 +166,8 @@ def compare_norm_distrib(B, num_samples): # da rivedere
     - Uses `numpy.linalg.norm` to compute Euclidean lengths.
     - Visualization is handled by `plot_two_hist` provided below.
     """
-    C = B.copy()
     n = B.shape[0]
-    Bs = Gram_Schmidt_orth(C)
+    Bs = Gram_Schmidt_orth(B)
     data_SR = np.zeros(num_samples, dtype = float)
     data_NP = np.zeros(num_samples, dtype = float)
 
@@ -175,7 +177,6 @@ def compare_norm_distrib(B, num_samples): # da rivedere
         data_NP[i] = np.linalg.norm(samples @ Bs)
 
     plot_two_hist(data_SR, data_NP, n)
-    pass
 	
 
 ############
@@ -264,32 +265,32 @@ if __name__ == "__main__":
     # Plot limits
     xlim, ylim = (-13, 13), (-13, 13)
 
-    # ##### 0. Check if vector is in lattice #####
-    # print("\n=== Check if vector is in lattice ===")
-    # print(in_lattice(bases[0],t)) # False
-    # print(in_lattice(bases[0],[4,0])) # True
+    ##### 0. Check if vector is in lattice #####
+    print("\n=== Check if vector is in lattice ===")
+    print(in_lattice(bases[0],t)) # False
+    print(in_lattice(bases[0],[4,0])) # True
 
-    # ##### 1. Simple rounding #####
-    # for B in bases:
-    #     print("\n=== Simple Rounding ===")
-    #     print("Basis:\n", B)
-    #     rounding_vec = simple_rounding(B, t)
-    #     print("Rounding result:", rounding_vec)
+    ##### 1. Simple rounding #####
+    for B in bases:
+        print("\n=== Simple Rounding ===")
+        print("Basis:\n", B)
+        rounding_vec = simple_rounding(B, t)
+        print("Rounding result:", rounding_vec)
 
-    #     plot_lattice_scene(B, xlim, ylim, t=t, rounding_vec=rounding_vec,
-    #                        title="2D lattice with Simple Rounding")
+        plot_lattice_scene(B, xlim, ylim, t=t, rounding_vec=rounding_vec,
+                           title="2D lattice with Simple Rounding")
 
-    # input("Press Enter to continue...")
+    input("Press Enter to continue...")
 
-    ##### 2. Gram-Schmidt #####
-    # for B in bases:
-    #     print("\n=== Gram-Schmidt ===")
-    #     print("Basis:\n", B)
+    #### 2. Gram-Schmidt #####
+    for B in bases:
+        print("\n=== Gram-Schmidt ===")
+        print("Basis:\n", B)
 
-    #     plot_lattice_scene(B, xlim, ylim, t=t, show_gs=True,
-    #                        title="2D lattice with Gram-Schmidt basis")
+        plot_lattice_scene(B, xlim, ylim, t=t, show_gs=True,
+                           title="2D lattice with Gram-Schmidt basis")
 
-    # input("Press Enter to continue...")
+    input("Press Enter to continue...")
 
     ##### 3. Nearest-plane (norm distribution) #####
     other_basis = [B2, B4, B24]
