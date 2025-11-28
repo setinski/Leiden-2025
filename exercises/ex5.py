@@ -1,4 +1,5 @@
 import numpy as np
+from math import sqrt, log
 
 ##################
 # A few numpy subtleties to discuss before-hand:
@@ -7,7 +8,7 @@ import numpy as np
 # - This means that modifying the submatrix modifies the original matrix
 # - include diagonal extraction ! 
 # - Beware and make explicit copies when needed
-
+#  np.diag(x)@y
 ##################
 
 
@@ -55,28 +56,48 @@ import numpy as np
 # "coefficient-wise" multiplication by that vector: "D * t" in numpy.
 
 def gram_schmidt_decomposition(B):
-	"""
+    n=B.shape[0]
+    Qfirst,R=np.linalg.qr(B.T)
+    Q=Qfirst.T 
+    Low=R.T
+    assert(np.allclose(B, Low @ Q))
+    D=np.copy(np.diag(Low))	
+    L=np.copy(Low)
+    for i in range(n):
+        L[:,i]=Low[:,i]/D[i]
+    return L,D,Q
+
+    """
 	Take as input a basis B and return its Gram Schmidt decomposition.
 	:param B: an (n x d) Matrix B (n <= d)
-	:return: L, D, Q such that B = TDQ, where 
+	:return: L, D, Q such that B = LDQ, where 
 	- L is Lower Triangular	with unit diagonal, 
 	- D is a diagonal matrix (represented as just a vector)
 	- and Q is orthogonal.
 	"""
 
 	# For some reason numpy offers qr but not lq. Use Transposition.
-	pass
 
 ### Sanity check the equation
 B = np.array([[1,2,3],[9,2,0],[0,8,3]], dtype="int")
 L, D, Q = gram_schmidt_decomposition(B)
 assert np.allclose(B, L @ np.diag(D) @ Q)
 print(L)
-### Note: more checks on L, D, Q having the right properties 
-### should be added.
+
+n=B.shape[0]
+
+for i in range(n): #checking whether L is low. tri.
+    for j in range(n):
+        if (j> i):
+            assert np.allclose(L[i,j], 0)
+
+for j in range(n): #checking whether Q is orthogonal
+    assert np.allclose(Q[:,j]@ Q[:,j],1)
+    for k in range(j+1, n):
+        assert np.allclose(Q[:,j]@ Q[:,k],0)
 
 def nearest_plane(L, t):
-	"""
+    """
 	Take as input the L of a Gram Schmidt Decomposition,
 	and a vector t expressed in basis B* = DQ. Modifies the target 
 	t in place, and return a lattice vector v expressed in base
@@ -84,10 +105,14 @@ def nearest_plane(L, t):
 
 	That is : t_old @ Bs = t_new @ Bs + v @ B, ensuring that 
 	t_new has all its coordinate in the range [-1/2, 1/2].
-	"""
-	n = len(t)
-	v = np.zeros(n, dtype="int")
-	pass
+    """
+    n = len(t)
+    v = np.zeros(n, dtype="int")
+    for i in reversed(range(n)):
+        k=int(np.round(t[i]))
+        v[i]=k
+        t-=k*L[i]
+    return v
 
 ### Sanity check the equation
 t_old = np.array([4.2, 5.3, 10.3])
@@ -97,12 +122,16 @@ assert(np.allclose((t_old * D) @ Q, ((t_new * D) @ Q) + (v @ B)))
 assert(np.max(np.abs(t_new)) <= .5)
 
 def size_reduce(B, L):
-	"""
+    """
 	Size reduce B, consistently modifying B and L in place.
 	No return value.
-	"""	
-	n, _ = B.shape
-	pass
+    """	
+    n= B.shape[0]
+    for i in range(n):
+        v=nearest_plane(L[:i, :i], L[i,:i])   ## L[i,:i] are the coeff L[i,0], L[i,1],..., L[i,i-1], len(v)=i
+        B[i]-=v@B[:i] 
+    return
+
 
 B_old = np.copy(B)
 size_reduce(B, L)
@@ -127,24 +156,43 @@ assert(np.linalg.det(U) == 1.)
 
 
 def slow_LLL(B, epsilon=0.01):
-	n,_ = B.shape
-	while True:
-		pass
-	
-		yield list(np.log(np.abs(D)))
-		
-		pass
+    max_iter=1000
+    n=B.shape[0]
+    L,D,Q=gram_schmidt_decomposition(B)
+    size_reduce(B,L)
+
+    for _ in range(max_iter):
+        for i in range(n-1):
+            if np.linalg.norm(Bs[i]) > (sqrt(4/3) + epsilon) * np.linalg.norm(Bs[i+1]):
+                B[[i, i + 1]] = B[[i + 1, i]]
+                L,D,Q=gram_schmidt_decomposition(B)
+                size_reduce(B, L)
+
+    raise RuntimeError("LLL did not converge within the maximum number of iterations.")
+	#"yield list(np.log(np.abs(D)))" don't know what to do with this
 
 
 def LLL(B, epsilon=0.01):
-	n,_ = B.shape
-	changed = True
-	while changed:
-		pass
-	
-		yield list(np.log(np.abs(D)))
-		
-		pass
+    max_iter=1000
+    n=B.shape[0]
+    L,D,Q=gram_schmidt_decomposition(B)
+    Bs=np.diag(D)@Q
+
+    for _ in range(max_iter):
+        changed=False
+        for i in range(n-1):
+            if np.linalg.norm(Bs[i]) > (sqrt(4/3) + epsilon) * np.linalg.norm(Bs[i+1]):
+                B[[i, i + 1]] = B[[i + 1, i]]
+                L,D,Q=gram_schmidt_decomposition(B)
+                Bs=np.diag(D)@Q
+                size_reduce(B, L)
+                changed=True
+
+        if not changed:
+            return
+
+    raise RuntimeError("LLL did not converge within the maximum number of iterations.")
+	#"yield list(np.log(np.abs(D)))" don't know what to do with this
 
 
 

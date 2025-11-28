@@ -64,7 +64,7 @@ def simple_rounding(B, t):
 
 def orth_proj(x, y):
     if np.allclose(y,0):
-        return 0
+        raise ValueError("Projecting Orthogonally to the zero-vector.")
     return y*(x@y)/(y@y)
     """
     Return the projection of vector `x` orthogonally to vector `y`, using the formula:
@@ -245,6 +245,10 @@ def plot_lattice_scene(B, xlim, ylim, t=None, rounding_vec=None, show_gs=False, 
 # Main runner
 ############
 if __name__ == "__main__":
+    B=np.array([[1,2,3],[9,2,0],[0,8,3]], dtype="int")
+    print(Gram_Schmidt_orth(B))
+    print(nearest_plane(B, Gram_Schmidt_orth(B), np.array([1,2,3], dtype="int")))
+
     # Example bases
     bases = [
         np.array([[4, 0], [1, 4]], dtype=int),
