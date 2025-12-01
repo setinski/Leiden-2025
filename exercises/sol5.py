@@ -77,7 +77,7 @@ def gram_schmidt_decomposition(B):
 B = np.array([[1,2,3],[9,2,0],[0,8,3]], dtype="int")
 L, D, Q = gram_schmidt_decomposition(B)
 assert np.allclose(B, L @ np.diag(D) @ Q)
-print(L)
+### print(L)
 ### Note: more checks on L, D, Q having the right properties 
 ### should be added.
 
@@ -137,12 +137,13 @@ assert(np.linalg.det(U) == 1.)
 # implemented (and how it was originally presented).
 
 
-def slow_LLL(B, epsilon=0.01):
+def slow_LLL(B, epsilon=0.01, animate=False):
 	n,_ = B.shape
 	while True:
 		L, D, Q = gram_schmidt_decomposition(B)
 		size_reduce(B, L)
-		yield list(np.log(np.abs(D)))
+		if animate:
+			yield list(np.log(np.abs(D)))
 		for i in range(n):
 			if i==n-1:
 				return
@@ -159,13 +160,14 @@ def slow_LLL(B, epsilon=0.01):
 # (2) After performing a swap at index i, it skips checking index i+1
 #     on the same pass. 
 
-def LLL(B, epsilon=0.01):
+def LLL(B, epsilon=0.01, animate=False):
 	n,_ = B.shape
 	changed = True
 	while changed:
 		L, D, Q = gram_schmidt_decomposition(B)
 		size_reduce(B, L)
-		yield list(np.log(np.abs(D)))
+		if animate:
+			yield list(np.log(np.abs(D)))
 		skip = False
 		changed = False
 		for i in range(n-1):
@@ -191,7 +193,7 @@ def anim_LLL(n, q, slow=True):
 		B[i, 0] = np.random.randint(0, q)
 
 	B_old = np.copy(B)
-	data = list(slow_LLL(B)) if slow else list(LLL(B))
+	data = list(slow_LLL(B,  animate=True)) if slow else list(LLL(B,  animate=True))
 	U = B_old @ np.linalg.inv(B)
 	U_ = np.round(U)
 	assert(np.allclose(U, U_))
