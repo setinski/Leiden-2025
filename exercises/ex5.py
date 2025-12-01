@@ -156,55 +156,40 @@ assert(np.linalg.det(U) == 1.)
 
 
 def slow_LLL(B, epsilon=0.01, animate=False):
-    max_iter=1000
     n=B.shape[0]
-    L,D,Q=gram_schmidt_decomposition(B)
-    size_reduce(B,L)
-    if animate:
-         yield list(np.log(np.abs(D)))
-    for _ in range(max_iter):
-        changed=False
-        for i in range(n-1):
-            if D[i]**2 > (sqrt(4/3) + epsilon) *(D[i]**2 *L[i+1,i] *D[i+1])**2:
-                B[[i, i+1]] = B[[i+1, i]]
-                L,D,Q=gram_schmidt_decomposition(B)
-                size_reduce(B, L)
-                changed=True
-        if not changed:
-            return
-
-    raise RuntimeError("LLL did not converge within the maximum number of iterations.")
+    while True:
+        L,D,Q=gram_schmidt_decomposition(B)
+        size_reduce(B,L)
+        if animate:
+            yield list(np.log(np.abs(D)))
+        for i in range(n):
+            if i==n-1:
+                 return
+            if D[i]**2 > (4/3) *D[i+1]**2: ## we use Bs=DQ and since Q orthonorm, the norm of Q doesnt change norm of DQ
+                break
+        B[[i, i+1]] = B[[i+1, i]]
 
 
 def LLL(B, epsilon=0.01, animate=False):
-    max_iter=1000
     n=B.shape[0]
-    L,D,Q=gram_schmidt_decomposition(B)
-    size_reduce(B,L)
-    if animate:
-        yield list(np.log(np.abs(D)))
-    for _ in range(max_iter):
-        changed=False
+    changed=True
+    while changed:
+        L,D,Q=gram_schmidt_decomposition(B)
+        size_reduce(B,L)
+        if animate:
+            yield list(np.log(np.abs(D)))
         skipnext=False
-        yield list(np.log(np.abs(D)))
+        changed=False
         for i in range(n-1):
             if skipnext:
                 skipnext=False
                 continue
-            if (D@Q)[i] > (sqrt(4/3) + epsilon) * (D@Q)[i+1]:
-                temp=B[i].copy()
-                temp2=B[i+1].copy()
-                B[i + 1] = temp
-                B[i]=temp2
-                L,D,Q=gram_schmidt_decomposition(B)
-                size_reduce(B, L)
+            if D[i]**2 > (4/3) *D[i+1]**2:
+                B[[i, i+1]] = B[[i+1, i]]
                 changed=True
                 skipnext=True
 
-        if not changed:
-            return
 
-    raise RuntimeError("LLL did not converge within the maximum number of iterations.")
 
 ###############
 import matplotlib.pyplot as plt
