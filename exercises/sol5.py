@@ -147,7 +147,7 @@ def slow_LLL(B, epsilon=0.01, animate=False):
 		for i in range(n):
 			if i==n-1:
 				return
-			if D[i]**2 > (4./3) * (D[i+1]**2 + (L[i+1, i] * D[i])**2):
+			if D[i]**2 > (4./3) * D[i+1]**2:
 				break
 		# We have found an index i to be Lagrange-reduced
 		B[[i, i+1]] = B[[i+1, i]]
@@ -174,7 +174,7 @@ def LLL(B, epsilon=0.01, animate=False):
 			if skip:
 				skip = False
 				continue
-			if D[i]**2 > (4./3) * (D[i+1]**2 + (L[i+1, i] * D[i])**2):
+			if D[i]**2 > (4./3) * D[i+1]**2:
 				B[[i, i+1]] = B[[i+1, i]]
 				changed = True
 				skip = True
