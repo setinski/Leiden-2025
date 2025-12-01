@@ -162,40 +162,51 @@ def slow_LLL(B, epsilon=0.01):
     size_reduce(B,L)
 
     for _ in range(max_iter):
+        changed=False
+        yield list(np.log(np.abs(D)))
         for i in range(n-1):
-            if np.linalg.norm(Bs[i]) > (sqrt(4/3) + epsilon) * np.linalg.norm(Bs[i+1]):
-                B[[i, i + 1]] = B[[i + 1, i]]
+            if D[i] > (sqrt(4/3) + epsilon) * D[i+1]:
+                temp=B[i].copy()
+                temp2=B[i+1].copy()
+                B[i + 1] = temp
+                B[i]=temp2
                 L,D,Q=gram_schmidt_decomposition(B)
                 size_reduce(B, L)
+                changed=True
+        if not changed:
+            return
 
     raise RuntimeError("LLL did not converge within the maximum number of iterations.")
-	#"yield list(np.log(np.abs(D)))" don't know what to do with this
 
 
 def LLL(B, epsilon=0.01):
     max_iter=1000
     n=B.shape[0]
     L,D,Q=gram_schmidt_decomposition(B)
-    Bs=np.diag(D)@Q
+    size_reduce(B,L)
 
     for _ in range(max_iter):
         changed=False
+        skipnext=False
+        yield list(np.log(np.abs(D)))
         for i in range(n-1):
-            if np.linalg.norm(Bs[i]) > (sqrt(4/3) + epsilon) * np.linalg.norm(Bs[i+1]):
-                B[[i, i + 1]] = B[[i + 1, i]]
+            if skipnext:
+                skipnext=False
+                continue
+            if D[i] > (sqrt(4/3) + epsilon) * D[i+1]:
+                temp=B[i].copy()
+                temp2=B[i+1].copy()
+                B[i + 1] = temp
+                B[i]=temp2
                 L,D,Q=gram_schmidt_decomposition(B)
-                Bs=np.diag(D)@Q
                 size_reduce(B, L)
                 changed=True
-
+                skipnext=True
+                
         if not changed:
             return
 
     raise RuntimeError("LLL did not converge within the maximum number of iterations.")
-	#"yield list(np.log(np.abs(D)))" don't know what to do with this
-
-
-
 
 ###############
 import matplotlib.pyplot as plt
