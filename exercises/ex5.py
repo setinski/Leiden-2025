@@ -155,21 +155,18 @@ assert(np.linalg.det(U) == 1.)
 # implemented (and how it was originally presented).
 
 
-def slow_LLL(B, epsilon=0.01):
+def slow_LLL(B, epsilon=0.01, animate=False):
     max_iter=1000
     n=B.shape[0]
     L,D,Q=gram_schmidt_decomposition(B)
     size_reduce(B,L)
-
+    if animate:
+         yield list(np.log(np.abs(D)))
     for _ in range(max_iter):
         changed=False
-        yield list(np.log(np.abs(D)))
         for i in range(n-1):
-            if (D@Q)[i] > (sqrt(4/3) + epsilon) * (D@Q)[i+1]:
-                temp=B[i].copy()
-                temp2=B[i+1].copy()
-                B[i + 1] = temp
-                B[i]=temp2
+            if D[i]**2 > (sqrt(4/3) + epsilon) *(D[i]**2 *L[i+1,i] *D[i+1])**2:
+                B[[i, i+1]] = B[[i+1, i]]
                 L,D,Q=gram_schmidt_decomposition(B)
                 size_reduce(B, L)
                 changed=True
@@ -179,12 +176,13 @@ def slow_LLL(B, epsilon=0.01):
     raise RuntimeError("LLL did not converge within the maximum number of iterations.")
 
 
-def LLL(B, epsilon=0.01):
+def LLL(B, epsilon=0.01, animate=False):
     max_iter=1000
     n=B.shape[0]
     L,D,Q=gram_schmidt_decomposition(B)
     size_reduce(B,L)
-
+    if animate:
+        yield list(np.log(np.abs(D)))
     for _ in range(max_iter):
         changed=False
         skipnext=False
@@ -219,7 +217,7 @@ def anim_LLL(n, q, slow=True):
 		B[i, 0] = np.random.randint(0, q)
 
 	B_old = np.copy(B)
-	data = list(slow_LLL(B)) if slow else list(LLL(B))
+	data = list(slow_LLL(B, animate=True)) if slow else list(LLL(B, animate=True))
 	U = B_old @ np.linalg.inv(B)
 	U_ = np.round(U)
 	assert(np.allclose(U, U_))
