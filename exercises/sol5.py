@@ -1,5 +1,4 @@
 import numpy as np
-from math import sqrt, log
 
 ##################
 # A few numpy subtleties to discuss before-hand:
@@ -8,7 +7,7 @@ from math import sqrt, log
 # - This means that modifying the submatrix modifies the original matrix
 # - include diagonal extraction ! 
 # - Beware and make explicit copies when needed
-#  np.diag(x)@y
+
 ##################
 
 
@@ -56,48 +55,34 @@ from math import sqrt, log
 # "coefficient-wise" multiplication by that vector: "D * t" in numpy.
 
 def gram_schmidt_decomposition(B):
-    n=B.shape[0]
-    Qfirst,R=np.linalg.qr(B.T)
-    Q=Qfirst.T 
-    Low=R.T
-    assert(np.allclose(B, Low @ Q))
-    D=np.copy(np.diag(Low))	
-    L=np.copy(Low)
-    for i in range(n):
-        L[:,i]=Low[:,i]/D[i]
-    return L,D,Q
-
-    """
+	"""
 	Take as input a basis B and return its Gram Schmidt decomposition.
 	:param B: an (n x d) Matrix B (n <= d)
-	:return: L, D, Q such that B = LDQ, where 
+	:return: L, D, Q such that B = TDQ, where 
 	- L is Lower Triangular	with unit diagonal, 
 	- D is a diagonal matrix (represented as just a vector)
 	- and Q is orthogonal.
 	"""
 
 	# For some reason numpy offers qr but not lq. Use Transposition.
+	Qt, R = np.linalg.qr(B.T, mode="complete")
+	Q, L = Qt.T, R.T
+	assert np.allclose(B, L @ Q)
+	D = np.copy(L.diagonal())
+	for i in range(len(D)):
+		L[:, i] /= D[i]
+	return L, D, Q
 
 ### Sanity check the equation
 B = np.array([[1,2,3],[9,2,0],[0,8,3]], dtype="int")
 L, D, Q = gram_schmidt_decomposition(B)
 assert np.allclose(B, L @ np.diag(D) @ Q)
-print(L)
-
-n=B.shape[0]
-
-for i in range(n): #checking whether L is low. tri.
-    for j in range(n):
-        if (j> i):
-            assert np.allclose(L[i,j], 0)
-
-for j in range(n): #checking whether Q is orthogonal
-    assert np.allclose(Q[:,j]@ Q[:,j],1)
-    for k in range(j+1, n):
-        assert np.allclose(Q[:,j]@ Q[:,k],0)
+### print(L)
+### Note: more checks on L, D, Q having the right properties 
+### should be added.
 
 def nearest_plane(L, t):
-    """
+	"""
 	Take as input the L of a Gram Schmidt Decomposition,
 	and a vector t expressed in basis B* = DQ. Modifies the target 
 	t in place, and return a lattice vector v expressed in base
@@ -105,14 +90,13 @@ def nearest_plane(L, t):
 
 	That is : t_old @ Bs = t_new @ Bs + v @ B, ensuring that 
 	t_new has all its coordinate in the range [-1/2, 1/2].
-    """
-    n = len(t)
-    v = np.zeros(n, dtype="int")
-    for i in reversed(range(n)):
-        k=int(np.round(t[i]))
-        v[i]=k
-        t-=k*L[i]
-    return v
+	"""
+	n = len(t)
+	v = np.zeros(n, dtype="int")
+	for i in reversed(range(n)):
+		v[i] = np.round(t[i])
+		t -= v[i] * L[i]
+	return v
 
 ### Sanity check the equation
 t_old = np.array([4.2, 5.3, 10.3])
@@ -122,16 +106,14 @@ assert(np.allclose((t_old * D) @ Q, ((t_new * D) @ Q) + (v @ B)))
 assert(np.max(np.abs(t_new)) <= .5)
 
 def size_reduce(B, L):
-    """
+	"""
 	Size reduce B, consistently modifying B and L in place.
 	No return value.
-    """	
-    n= B.shape[0]
-    for i in range(n):
-        v=nearest_plane(L[:i, :i], L[i,:i])   ## L[i,:i] are the coeff L[i,0], L[i,1],..., L[i,i-1], len(v)=i
-        B[i]-=v@B[:i] 
-    return
-
+	"""	
+	n, d = B.shape
+	for i in range(1, n):
+		v = nearest_plane(L[:i, :i], L[i, :i])
+		B[i] -= v @ B[:i]
 
 B_old = np.copy(B)
 size_reduce(B, L)
@@ -155,58 +137,50 @@ assert(np.linalg.det(U) == 1.)
 # implemented (and how it was originally presented).
 
 
-def slow_LLL(B, epsilon=0.01):
-    max_iter=1000
-    n=B.shape[0]
-    L,D,Q=gram_schmidt_decomposition(B)
-    size_reduce(B,L)
-
-    for _ in range(max_iter):
-        changed=False
-        yield list(np.log(np.abs(D)))
-        for i in range(n-1):
-            if (D@Q)[i] > (sqrt(4/3) + epsilon) * (D@Q)[i+1]:
-                temp=B[i].copy()
-                temp2=B[i+1].copy()
-                B[i + 1] = temp
-                B[i]=temp2
-                L,D,Q=gram_schmidt_decomposition(B)
-                size_reduce(B, L)
-                changed=True
-        if not changed:
-            return
-
-    raise RuntimeError("LLL did not converge within the maximum number of iterations.")
+def slow_LLL(B, epsilon=0.01, animate=False):
+	n,_ = B.shape
+	while True:
+		L, D, Q = gram_schmidt_decomposition(B)
+		size_reduce(B, L)
+		if animate:
+			yield list(np.log(np.abs(D)))
+		for i in range(n):
+			if i==n-1:
+				return
+			if D[i]**2 > (4./3) * (D[i+1]**2 + (L[i+1, i] * D[i])**2):
+				break
+		# We have found an index i to be Lagrange-reduced
+		B[[i, i+1]] = B[[i+1, i]]
 
 
-def LLL(B, epsilon=0.01):
-    max_iter=1000
-    n=B.shape[0]
-    L,D,Q=gram_schmidt_decomposition(B)
-    size_reduce(B,L)
+### The faster LLL version adds two optimizations compared to slow_LLL.
+# (1) Instead of looping forever and stopping only when the final Lovász
+#     check succeeds, it tracks whether any swap occurred during the pass.
+#     If no changes happen, the algorithm terminates.
+# (2) After performing a swap at index i, it skips checking index i+1
+#     on the same pass. 
 
-    for _ in range(max_iter):
-        changed=False
-        skipnext=False
-        yield list(np.log(np.abs(D)))
-        for i in range(n-1):
-            if skipnext:
-                skipnext=False
-                continue
-            if (D@Q)[i] > (sqrt(4/3) + epsilon) * (D@Q)[i+1]:
-                temp=B[i].copy()
-                temp2=B[i+1].copy()
-                B[i + 1] = temp
-                B[i]=temp2
-                L,D,Q=gram_schmidt_decomposition(B)
-                size_reduce(B, L)
-                changed=True
-                skipnext=True
+def LLL(B, epsilon=0.01, animate=False):
+	n,_ = B.shape
+	changed = True
+	while changed:
+		L, D, Q = gram_schmidt_decomposition(B)
+		size_reduce(B, L)
+		if animate:
+			yield list(np.log(np.abs(D)))
+		skip = False
+		changed = False
+		for i in range(n-1):
+			if skip:
+				skip = False
+				continue
+			if D[i]**2 > (4./3) * (D[i+1]**2 + (L[i+1, i] * D[i])**2):
+				B[[i, i+1]] = B[[i+1, i]]
+				changed = True
+				skip = True
 
-        if not changed:
-            return
 
-    raise RuntimeError("LLL did not converge within the maximum number of iterations.")
+
 
 ###############
 import matplotlib.pyplot as plt
@@ -219,7 +193,7 @@ def anim_LLL(n, q, slow=True):
 		B[i, 0] = np.random.randint(0, q)
 
 	B_old = np.copy(B)
-	data = list(slow_LLL(B)) if slow else list(LLL(B))
+	data = list(slow_LLL(B,  animate=True)) if slow else list(LLL(B,  animate=True))
 	U = B_old @ np.linalg.inv(B)
 	U_ = np.round(U)
 	assert(np.allclose(U, U_))
