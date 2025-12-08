@@ -11,12 +11,12 @@ def random_SIS_lattice(n, m, q):
 	return B
 
 # Measure the root hermite factor of LLL on a SIS lattice: 
-# the value c such that ||b_1|| = c^(m-1) * det(L)^{1/n}
+# the value c such that ||b_1|| = c^(m-1) * det(L)^{1/m}
 # Note: the determinant can be predicted from n, m, q
 
 def measure_rhf(n, m, q):
     B=random_SIS_lattice(n,m,q)
-    LLL(B, epsilon=0.01, animate=False)
+    list(LLL(B, epsilon=0.01, animate=False))
     c=(np.linalg.norm(B[0])/(q**(n/m)))**(1/(m-1))
     return c
 
@@ -29,6 +29,7 @@ def rhf_SIS():
     result=[]
     for i in range(10,50):
         temp=measure_rhf(i, 2*i, ceil(2**(3 + i/4)))
+        print(i)
         print(temp)
         result.append(temp)
 
@@ -44,7 +45,7 @@ def rhf_SIS():
 # Define C to be experimental limit of the root hermite factor
 # (The following should match your experiment roughly)
 
-C = 1.035 
+C = 1.025 
 
 # Using C, n, m, q, predict the length of a solution to SIS using LLL:
 
