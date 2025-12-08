@@ -20,25 +20,25 @@ def measure_SIS_solution_length(n, m, q):
 
 import matplotlib.pyplot as plt
 
-# rep = 5
-# R = []
-# P = []
-# M = list(range(30, 120, 5))
-# for m in M:
-#   real = 0
-#   for r in range(rep):
-#       real += log(measure_SIS_solution_length(20, m, 67))/rep
-#   pred = log(predict_SIS_solution_length(20, m, 67))
-#   R.append(real)
-#   P.append(pred)
-#   print(m, pred, real)
+rep = 5
+R = []
+P = []
+M = list(range(30, 105, 5))
+for m in M:
+  real = 0
+  for r in range(rep):
+      real += log(measure_SIS_solution_length(20, m, 67))/rep
+  pred = log(predict_SIS_solution_length(20, m, 67))
+  R.append(real)
+  P.append(pred)
+  print(m, pred, real)
     
 
-# plt.plot(M, R)
-# plt.plot(M, P)
-# plt.ylabel('Root Hermite Factor')
-# plt.ylabel('Dimension')
-# plt.show()
+plt.plot(M, R)
+plt.plot(M, P)
+plt.ylabel('Root Hermite Factor')
+plt.ylabel('Dimension')
+plt.show()
 
 
 for m in [30, 60, 100]:
