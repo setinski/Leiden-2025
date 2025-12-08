@@ -17,3 +17,6 @@ def measure_SIS_solution_length(n, m, q):
 # prediction made in ex6 for n = 20, q=67 and m growing from 30 to 120.
 # using a logarithmic scale
 
+
+# Try to understand what is going on by looking at the profile
+# of a basis for relevant values of m.
