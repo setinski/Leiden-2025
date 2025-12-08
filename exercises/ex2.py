@@ -80,7 +80,7 @@ def orth_proj(x, y):
     :rtype: numpy.ndarray
     """
     if np.allclose(y,0):
-        raise ValueError
+        raise ValueError("You should not be projecting orthogonally to zero")
     return (x@y)/(y@y)*y 
 
 def Gram_Schmidt_orth(B):
@@ -138,7 +138,6 @@ def nearest_plane(B, Bs, t):
         v += k*B[i]
         e -= k*B[i]
     return v
-
 
 
 ############
