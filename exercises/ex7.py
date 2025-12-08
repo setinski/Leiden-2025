@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 from math import sqrt, log, exp, ceil
 from sys import exit
 from sol5 import LLL
-from sol6 import *
+from sol6 import random_SIS_lattice
+
 
 # Measure the length of the first vector found by LLL on a 
 # SIS lattice with paramenters n, m, q
