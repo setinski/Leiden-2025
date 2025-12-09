@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 rep = 5
 R = []
 P = []
-M = list(range(30, 105, 5))
+M = list(range(30, 100, 2))
 for m in M:
   real = 0
   for r in range(rep):
@@ -36,9 +36,15 @@ for m in M:
 
 plt.plot(M, R)
 plt.plot(M, P)
-plt.ylabel('Root Hermite Factor')
-plt.ylabel('Dimension')
+plt.ylabel('log ||b_1||')
+plt.xlabel('m')
 plt.show()
+
+
+
+
+# Try to understand what is going on by looking at the profile
+# of a basis for relevant values of m.
 
 
 for m in [30, 60, 100]:
@@ -48,5 +54,7 @@ for m in [30, 60, 100]:
     print(m)
     plt.plot(range(m), np.log(np.abs(D)), label="m = %d"%m)
 
+plt.ylabel('log ||b_i||')
+plt.xlabel('i')
 plt.legend(loc="upper right")
 plt.show()

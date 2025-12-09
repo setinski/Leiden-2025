@@ -22,7 +22,7 @@ def plot_SIS_and_profiles():
     meas=[]
     pred=[]
     rep=5
-    domain=range(30,110,5) #steps of 5
+    domain=range(30,90,5) #steps of 5
     for i in domain: 
         x = 0
         for r in range(rep):
@@ -34,12 +34,12 @@ def plot_SIS_and_profiles():
     plt.plot(domain, pred)
     plt.scatter(domain, meas)
     plt.scatter(domain, pred)
-    plt.xlim(30, 100)
+    plt.xlim(30, 90)
     plt.xlabel("m")
 
     plt.show()
 
-    for i in [30, 60, 100]:
+    for i in [30, 60, 90]:
         B = random_SIS_lattice(20, i, 67)
         list(LLL(B))
         _, D, _ = gram_schmidt_decomposition(B)
