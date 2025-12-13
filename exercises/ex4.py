@@ -36,7 +36,21 @@ def lagrange_reduce(B):
 
 	U = np.identity(2, dtype=np.int64)
 	
-	pass
+	if np.linalg.norm(B[0]) < np.linalg.norm(B[1]):
+		B[0], B[1] = B[1].copy(), B[0].copy()
+		U[0], U[1] = U[1].copy(), U[0].copy()
+	
+	k = 1
+
+	while k != 0:
+		k = int(np.round((B[0]@B[1])/(B[0]@B[0])))
+		B[1] -= k * B[0]
+		U[1] -= k * U[0]
+		if np.linalg.norm(B[0]) < np.linalg.norm(B[1]):
+			B[0], B[1] = B[1].copy(), B[0].copy()
+			U[0], U[1] = U[1].copy(), U[0].copy()
+	
+	return U
 
 
 ############
