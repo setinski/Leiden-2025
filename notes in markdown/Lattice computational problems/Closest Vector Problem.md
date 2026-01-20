@@ -10,3 +10,7 @@ aliases: CVP
 >- Output $\mathbf{v} \in L$ such that $\| \mathbf{v} -\mathbf{t} \| \leq \alpha d(\mathbf{t},L)$.
 >
 >==ExactCVP== is by definition $1$-SVP. 
+
+
+>[!info] Note
+>A vector $\mathbf{v} \in L$ such that $\| \mathbf{v} -\mathbf{t} \| \leq \alpha d(\mathbf{t},L)$ ==need not be unique==.

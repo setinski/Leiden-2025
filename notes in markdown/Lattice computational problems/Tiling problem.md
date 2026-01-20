@@ -18,5 +18,5 @@ Let $T$ be a [[Tiling]] for a [[Lattice]] $\mathcal{L} \subseteq \mathbb{R}^{n}$
 >
 >Indeed, 
 >- $\mathbf{t} - \mathbf{v} \in T$ implies $\| \mathbf{t} - \mathbf{v} \| \leq \mu(T)$ by definition of $\mu(T)$;
->- if $d(\mathbf{t},\mathcal{L}) \leq \nu(T)$, there exists $\mathbf{v} \in \mathcal{L}$ such that $\|\mathbf{t} - \mathbf{v}\| \underbrace{ \leq  d(\mathbf{t},\mathcal{L})}_{ 1-\text{CVP} } \overbrace{ \leq \nu(T) }^{ \text{AbsBDD} }$, which implies $\mathbf{t} - \mathbf{v} \in T$: the algorithm outputs said $\mathbf{v}$ because of uniqueness;
+>- if $d(\mathbf{t},\mathcal{L}) \leq \nu(T)$, there exists $\mathbf{v} \in \mathcal{L}$ such that $\|\mathbf{t} - \mathbf{v}\| \underbrace{ \leq  d(\mathbf{t},\mathcal{L})}_{ 1-\text{CVP} } \overbrace{ \leq \nu(T) }^{ \text{AbsBDD} }$, which implies $\mathbf{t} - \mathbf{v} \in T$: the algorithm outputs said $\mathbf{v}$ because of uniqueness of the decomposition $T + \mathcal{L} = \operatorname{Span}_{\mathbb{R}}\mathcal{L}$;
 >- if $d(\mathbf{t},\mathcal{L}) > \nu(T)$, for any $\mathbf{v} \in \mathcal{L}$ such that $\mathbf{v} - \mathbf{t} \in T$, we have $\|\mathbf{t} - \mathbf{v}\| \leq \mu(T) \leq \mu(T) \cdot \frac{d(\mathbf{t},\mathcal{L})}{\nu(T)}$, since $\frac{d(\mathbf{t},\mathcal{L})}{\nu(T)} > 1$.

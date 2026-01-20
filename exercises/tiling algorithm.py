@@ -47,30 +47,27 @@ def tiling(B, T, t):
     
     return tiling_in_Zn(T,np.linalg.solve(B.T,t)) @ B
 
+###--- Sanity checks ---### UNCOMMENT LINES TO EXECUTE
+# B = np.array([[1,0,1],[0,1,0],[1,6,0]])
+# T = np.array([[1,0,0],[2,1,0],[3,2,1]])
+# t = [1,2.8,3.6]
+# v = tiling(B, T, t)
 
-B = np.array([[1,0,1],[0,1,0],[1,6,0]])
-# T = np.identity(3)
-T = np.array([[1,0,0],[2,1,0],[3,2,1]])
-t = [1,2.8,3.6]
+# # the tiling vector is in the lattice:
+# x = np.linalg.solve(B.T,v)
+# print(np.allclose(np.round(x), x))
 
-print(tiling(B, T, t))
+# # the difference between the tiling vector and the target is in the fundamental parallelogram
+# # x \in (-1/2, 1/2]^n * T@B iff x @ (T@B)^{-1} \in (-1/2, 1/2]^n
+# # note: we use (-1/2, 1/2] in place of [-1/2, 1/2) because np.round(.5) = 0, not 1.
+# C = np.linalg.inv(T @ B).T
 
-### Sanity checks
-
-v = tiling(B, T, t)
-
-# the tiling vector is in the lattice:
-x = np.linalg.solve(B.T,v)
-print(np.allclose(np.round(x), x))
-
-# the difference between the tiling vector and the target is in the fundamental parallelogram
-# x \in [-1/2, 1/2)^n * T@B iff x @ (T@B)^{-1} \in [-1/2, 1/2)^n
-C = np.linalg.inv(T @ B).T
-
-for i in range(3):
-    print((v-t) @ C[i] < .5 or (v-t) @ C[i] >= -.5)
+# for i in range(3):
+#     print((v-t) @ C[i] <= .5 or (v-t) @ C[i] > -.5)
 
 ###--- Visualization ---###
+
+### I slightly modified plotting functions to work for P(T@B) in place of P(B)
 
 def draw_fundamental_regions(B, T, xlim, ylim, color1="lightgray", color2="white", alpha=0.8, outline=True):
     """
@@ -178,9 +175,8 @@ if __name__ == "__main__":
     ]
 
     T = np.array([[1,0],[2,1]])
+    #T = np.array([[1,0],[2.2,1]])
     #T = np.identity(2)
-
-    #print(bases[1] @ T)
 
     # Example target vector
     t = np.array([3.3, 8.4], dtype=float)
@@ -196,4 +192,3 @@ if __name__ == "__main__":
         plot_lattice_scene(B, T, xlim, ylim, t=t, rounding_vec=tiling(B, T, t),title="Slanted tiling")
         
     input("Press Enter to continue...")
-

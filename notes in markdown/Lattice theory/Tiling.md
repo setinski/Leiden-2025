@@ -22,5 +22,5 @@ aliases: ["covering", "packing", "tiling"]
 
 >[!info] Note
 >For any tiling $T$ of a lattice $\mathcal{L}$, we have:
->- $\mu(T) \geq \mu(\mathcal{L}) \coloneq \sup_{x \in \operatorname{Span}_{\mathbb{R}}\mathcal{L}} d(x,\mathcal{L})$, since for every $\mathbf{x} \in \operatorname{Span}_{\mathbb{R}}\mathcal{L}$, $\mathbf{x} = \mathbf{v} + \mathbf{e}$, for some $\mathbf{e} \in T$ and $\mathbf{v} \in \mathcal{L}$, hence $\mu(T) > \|\mathbf{e}\| = \|\mathbf{x} - \mathbf{v}\| \geq d(\mathbf{x},\mathcal{L})$.
+>- $\mu(T) \geq \mu(\mathcal{L}) \coloneq \sup\limits_{x \in \operatorname{Span}_{\mathbb{R}}\mathcal{L}} d(x,\mathcal{L})$, since for every $\mathbf{x} \in \operatorname{Span}_{\mathbb{R}}\mathcal{L}$, $\mathbf{x} = \mathbf{v} + \mathbf{e}$, for some $\mathbf{e} \in T$ and $\mathbf{v} \in \mathcal{L}$, hence $\mu(T) \geq \|\mathbf{e}\| = \|\mathbf{x} - \mathbf{v}\| \geq d(\mathbf{x},\mathcal{L})$.
 >- $\nu(T) \leq \frac{\lambda_{1}(\mathcal{L})}{2}$, as $\frac{\lambda_{1}(\mathcal{L})}{2}\mathcal B$ contains at least two points of $\mathcal{L}$, whereas $T \cap \mathcal{L} = (0 + T) \cap \mathcal{L} = \{0\}$: hence $\frac{\lambda_{1}(\mathcal{L})}{2}\mathcal B \not \subseteq T$.

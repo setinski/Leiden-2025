@@ -14,13 +14,13 @@ Fix any norm $\|\cdot\|$ on $\mathbb{R}^{n}$.
 >>Assume, by way of contradiction, that for all $\delta > 0$ there exists some $x_{\delta} \in \mathcal{L}$ such that $B_{\delta}(x_{\delta}) \cap \mathcal{L} \neq \{ x_{\delta} \}$. If $y_{\delta} \in B_{\delta}(x_{\delta}) \setminus \{ x_{\delta} \}$, then $y_{\delta} - x_{\delta} \in \mathcal{L}$ and $0 < \| y_{\delta} - x_{\delta} \| < \delta$. Hence for all $\delta > 0$, we have $B_{\delta}(0) \cap \mathcal{L} \setminus \{ 0 \} \ni y_{\delta} - x_{\delta}$, which contradicts the discreteness of $\mathcal{L}$.
 
 >[!proposition] 
->$0 \neq \mathcal{L} \leq (\mathbb{R}^{n},+)$ is discrete if and only if it admits a non-zero minimal distance, i.e. $\lambda_{1}(\mathcal{L}) \coloneq\min_{x\neq y \in \mathcal{L}}\|y - x\| > 0$.
+>$0 \neq \mathcal{L} \leq (\mathbb{R}^{n},+)$ is discrete if and only if it admits a non-zero minimal distance, i.e. $\lambda_{1}(\mathcal{L}) \coloneq\min\limits_{x\neq y \in \mathcal{L}}\|y - x\| > 0$.
 
 >##### Proof
 >If $\mathcal{L}$ admits a minimal distance $\delta$, then it is clearly discrete: for every $x \in \mathcal{L}$, $B_{\frac{\delta}{2}}(x) \cap \mathcal{L} = \{x\}$.
 >
->Let now  $\mathcal{L}$ be a lattice, hence uniformly discrete.  Notice that $$\lambda_{1}(\mathcal{L}) = \min_{x\neq y \in \mathcal{L}}\|y - x\| = \min_{x \in L} \min_{y \in \mathcal{L} \setminus \{ x \}}\|y - x\| = \min_{y \in \mathcal{L} \setminus \{ 0 \}}\|y\|,$$
->where the latter equality holds because if $\tilde{y}$ is a minimum for $y \in \mathcal{L} \setminus \{ x \} \mapsto \|y-x\|$, then $\tilde{y} - x \in \mathcal{L}$. By uniform discreteness, $a \coloneq\inf_{y \in \mathcal{L} \setminus \{ 0 \}}\|y\|$ is strictly positive. By definition of infimum, there exists a sequence $\{ y_{n} \} \in \mathcal{L}^{\mathbb{N}}$ such that $0 < \|y_{n}\| < a + \frac{1}{n}$. By the squeeze theorem, the limit $y \coloneq \lim_{ n} y_{n}$ exists and by continuity of the norm, $\|y\| = a$. Since every convergent sequence in $\mathbb{R}^{n}$ is Cauchy, eventually $\|y_{n} - y_{m}\| < a$. However, since $y_{n} - y_{m} \in \mathcal{L}$, we decuce that $\{ y_{n} \}_{n \in \mathbb{N}}$ is eventually constant, hence $y \in \mathcal{L}$ and $\|y\| = a = \lambda_{1}(\mathcal{L})$.
+>Let now  $\mathcal{L}$ be a lattice.  Notice that $$\lambda_{1}(\mathcal{L}) = \min_{x\neq y \in \mathcal{L}}\|y - x\| = \min_{x \in L} \min_{y \in \mathcal{L} \setminus \{ x \}}\|y - x\| = \min_{y \in \mathcal{L} \setminus \{ 0 \}}\|y\|,$$
+>where the latter equality holds because if $\tilde{y}$ is a minimum for $y \in \mathcal{L} \setminus \{ x \} \mapsto \|y-x\|$, then $\tilde{y} - x \in \mathcal{L}$. By discreteness of $\mathcal{L}$, $a \coloneq\inf_{y \in \mathcal{L} \setminus \{ 0 \}}\|y\|$ is strictly positive. Note that $\lambda_{1}(L) = \min_{x \in \mathcal{L} \cap (2a)\mathcal{B}} \|x\|$, and the function $x \in \mathcal{L} \cap (2a)\mathcal{B} \mapsto \|x\| \in \mathbb{R}$ admits a minimum by continuity of the norm and by compactness of  $\mathcal{L} \cap (2a)\mathcal{B}$ — the latter set is bounded and discrete, thus finite and in particular compact.
 
 >[!example] As an ==#exercise==
 >Give an example of:
